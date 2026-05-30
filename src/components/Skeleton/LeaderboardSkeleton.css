@@ -1,0 +1,55 @@
+.leaderboard-skeleton {
+  padding: 3rem 0;
+  display: flex;
+  justify-content: center;
+
+  .container {
+    width: 700px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .sk-lb-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .sk-your-rank {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .sk-lb-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .sk-lb-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 1rem 1.2rem;
+    background: var(--secondary);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+
+    .sk-lb-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 1.5rem 1rem;
+    .container {
+      width: 100%;
+    }
+  }
+}

@@ -1,0 +1,130 @@
+.progress-skeleton {
+  padding: 3rem 0;
+  display: flex;
+  justify-content: center;
+
+  .container {
+    width: 800px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .sk-progress-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .sk-progress-header-text {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+  }
+
+  .sk-stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
+
+  .sk-stat-card {
+    background: var(--secondary);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .sk-topic-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .sk-topic-item {
+    background: var(--secondary);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .sk-topic-info {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .sk-topic-bar-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      .skeleton:first-child {
+        flex: 1;
+      }
+    }
+  }
+
+  .sk-type-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
+
+  .sk-type-card {
+    background: var(--secondary);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .sk-sessions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .sk-session-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.2rem;
+    background: var(--secondary);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+
+    .sk-session-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .sk-session-text {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 1.5rem 1rem;
+
+    .container {
+      width: 100%;
+    }
+    .sk-stats-row {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .sk-type-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}

@@ -1,0 +1,265 @@
+.leaderboard {
+  padding: 3rem 0;
+  display: flex;
+  justify-content: center;
+
+  .container {
+    width: 700px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .lb-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+
+    .lb-trophy {
+      font-size: 3rem;
+      color: #eab308;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+
+    p {
+      font-size: 14px;
+      color: var(--muted);
+    }
+  }
+
+  .your-rank-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .your-rank-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 1rem 1.2rem;
+    background: rgba(23, 82, 240, 0.06);
+    border: 1.5px solid var(--blue);
+    border-radius: 16px;
+
+    .your-rank-pos {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--blue);
+      min-width: 40px;
+    }
+
+    .your-rank-info {
+      flex: 1;
+
+      .your-rank-name {
+        font-weight: 600;
+        font-size: 15px;
+      }
+
+      .your-rank-meta {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 2px;
+      }
+    }
+
+    .your-rank-stats {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .xp-pill {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #eab308;
+      background: rgba(234, 179, 8, 0.1);
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    .streak-pill {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #f97316;
+      background: rgba(249, 115, 22, 0.1);
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+  }
+
+  .lb-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 3rem;
+  }
+
+  .lb-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 1rem 1.2rem;
+    background: var(--secondary);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    transition: background 0.2s;
+
+    &:hover {
+      background: var(--input);
+    }
+
+    &.is-you {
+      border-color: var(--blue);
+      background: rgba(23, 82, 240, 0.04);
+    }
+  }
+
+  .lb-rank {
+    min-width: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .rank-icon {
+      font-size: 1.2rem;
+
+      &.gold {
+        color: #eab308;
+      }
+      &.silver {
+        color: #94a3b8;
+      }
+      &.bronze {
+        color: #b45309;
+      }
+    }
+
+    .rank-number {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+  }
+
+  .lb-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--input);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--blue);
+    flex-shrink: 0;
+
+    &.gold {
+      background: rgba(234, 179, 8, 0.15);
+      color: #eab308;
+    }
+    &.silver {
+      background: rgba(148, 163, 184, 0.2);
+      color: #94a3b8;
+    }
+    &.bronze {
+      background: rgba(180, 83, 9, 0.15);
+      color: #b45309;
+    }
+    &.you {
+      background: rgba(23, 82, 240, 0.12);
+      color: var(--blue);
+    }
+  }
+
+  .lb-info {
+    flex: 1;
+
+    .lb-name {
+      font-weight: 600;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .lb-meta {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+  }
+
+  .you-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(23, 82, 240, 0.1);
+    color: var(--blue);
+  }
+
+  .lb-xp {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 700;
+    font-size: 14px;
+
+    .xp-star {
+      color: #eab308;
+      font-size: 12px;
+    }
+  }
+
+  .no-data {
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+    padding: 2rem;
+  }
+
+  .loading {
+    text-align: center;
+    color: var(--muted);
+    padding: 3rem;
+  }
+
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: var(--border);
+  }
+}
+
+@media (max-width: 768px) {
+  .leaderboard {
+    padding: 1.5rem 1rem;
+
+    .container {
+      width: 100%;
+    }
+
+    .your-rank-card {
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+  }
+}
