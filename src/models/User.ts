@@ -44,6 +44,11 @@ User.init(
       type: DataTypes.DATEONLY,
       allowNull: true,
     },
+
+    achievements: {
+      type: DataTypes.JSON,
+      defaultValue: [],
+    },
   },
   {
     sequelize,

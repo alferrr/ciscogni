@@ -4,15 +4,27 @@ import axios from "axios";
 import Header from "@/components/Header/Header";
 import "./profile.css";
 import {
-  FaRegUser,
-  FaLock,
-  FaStar,
+  FaBullseye,
+  FaArrowsRotate,
+  FaBug,
+  FaWandMagicSparkles,
+  FaEye,
+  FaLocationDot,
   FaFire,
-  FaChartLine,
-  FaCircleCheck,
+  FaStar,
+  FaGem,
+  FaCrown,
+  FaBook,
+  FaBookOpen,
   FaTrophy,
   FaBrain,
+  FaLock,
+  FaChartLine,
+  FaRegUser,
+  FaCircleCheck,
 } from "react-icons/fa6";
+import { GiSwordman } from "react-icons/gi";
+
 import { useToast } from "@/context/ToastContext";
 import { useRouter } from "next/navigation";
 import ProfileSkeleton from "@/components/Skeleton/ProfileSkeleton";
@@ -26,6 +38,24 @@ const topicLabels: Record<string, string> = {
   control_structure_2: "Control Structure II",
   testing_debugging: "Testing & Debugging",
   arrays_pointers: "Arrays & Pointers",
+};
+
+const iconMap: Record<string, React.ReactNode> = {
+  FaBullseye: <FaBullseye />,
+  FaArrowsRotate: <FaArrowsRotate />,
+  FaBug: <FaBug />,
+  FaWandMagicSparkles: <FaWandMagicSparkles />,
+  FaEye: <FaEye />,
+  FaLocationDot: <FaLocationDot />,
+  FaFire: <FaFire />,
+  FaSword: <GiSwordman />,
+  FaStar: <FaStar />,
+  FaGem: <FaGem />,
+  FaCrown: <FaCrown />,
+  FaBook: <FaBook />,
+  FaBookOpen: <FaBookOpen />,
+  FaTrophy: <FaTrophy />,
+  FaBrain: <FaBrain />,
 };
 
 const typeLabels: Record<string, string> = {
@@ -53,6 +83,23 @@ const Profile = () => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [achievements, setAchievements] = useState<any[]>([]);
+  const [newlyUnlocked, setNewlyUnlocked] = useState<string[]>([]);
+
+  const fetchAchievements = useCallback(async () => {
+    try {
+      const { data } = await axios.get("/api/achievements");
+      setAchievements(data.achievements);
+      if (data.newlyUnlocked.length > 0) {
+        data.newlyUnlocked.forEach((id: string) => {
+          const a = data.achievements.find((x: any) => x.id === id);
+          if (a) showToast(`🏅 Achievement unlocked: ${a.label}!`, "success");
+        });
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }, [showToast]);
 
   const fetchUser = useCallback(async () => {
     try {
@@ -76,11 +123,6 @@ const Profile = () => {
       setLoading(false);
     }
   }, []);
-
-  useEffect(() => {
-    fetchUser();
-    fetchProgress();
-  }, [fetchUser, fetchProgress]);
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -136,6 +178,12 @@ const Profile = () => {
       setSaving(false);
     }
   };
+
+  useEffect(() => {
+    fetchUser();
+    fetchProgress();
+    fetchAchievements();
+  }, [fetchUser, fetchProgress, fetchAchievements]);
 
   if (loading)
     return (
@@ -325,6 +373,27 @@ const Profile = () => {
                     >
                       {Math.round((s.score / s.total) * 100)}%
                     </span>
+                  </div>
+                ))}
+              </div>
+
+              <h3 className="sub-title">Achievements</h3>
+              <div className="achievements-grid">
+                {achievements.map((a) => (
+                  <div
+                    key={a.id}
+                    className={`achievement-card ${a.unlocked ? "unlocked" : "locked"}`}
+                  >
+                    <span className="achievement-icon">
+                      {iconMap[a.icon] ?? <FaStar />}
+                    </span>
+                    <p className="achievement-label">{a.label}</p>
+                    <p className="achievement-desc">{a.description}</p>
+                    {!a.unlocked && (
+                      <div className="achievement-lock">
+                        <FaLock />
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
