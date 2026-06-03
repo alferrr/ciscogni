@@ -221,7 +221,7 @@ const CompetitiveModePage = () => {
               {selected && (
                 <div className="comp-feedback">
                   {selected === "__timeout__" ? (
-                    <p className="timeout-msg">⏱ Time's up!</p>
+                    <p className="timeout-msg">Time's up!</p>
                   ) : (
                     <p className="xp-msg">
                       <FaBolt /> +

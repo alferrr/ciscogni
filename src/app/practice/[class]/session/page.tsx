@@ -2,24 +2,26 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "@/components/Header/Header";
-import { CLASSES } from "@/config/classes";
 import {
   FaArrowRight,
   FaArrowLeft,
   FaCircleCheck,
   FaCircleXmark,
 } from "react-icons/fa6";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 import "../../practice.css";
+import { Suspense } from "react";
+import Loader from "@/components/Loader/Loader";
 
-const PracticeTopicPage = () => {
+const SessionInner = () => {
   const router = useRouter();
   const params = useParams();
-  const classId = params.class as string;
-  const topicId = params.topic as string;
+  const searchParams = useSearchParams();
 
-  const cls = CLASSES.find((c) => c.id === classId);
-  const topic = cls?.topics.find((t) => t.id === topicId);
+  const classId = params?.class as string;
+  const topicsParam = searchParams?.get("topics") ?? "";
+  const countParam = searchParams?.get("count") ?? "10";
+  const count = Math.min(parseInt(countParam), 50);
 
   const [questions, setQuestions] = useState<any[]>([]);
   const [current, setCurrent] = useState(0);
@@ -31,10 +33,12 @@ const PracticeTopicPage = () => {
   const [results, setResults] = useState<any[]>([]);
 
   useEffect(() => {
+    if (!classId || !topicsParam) return;
+
     const fetch = async () => {
       try {
         const { data } = await axios.get(
-          `/api/questions?topic=${topicId}&mode=practice`,
+          `/api/questions/bulk?topics=${topicsParam}&count=${count}&mode=practice`,
         );
         setQuestions(data);
       } catch (err) {
@@ -44,7 +48,7 @@ const PracticeTopicPage = () => {
       }
     };
     fetch();
-  }, [topicId]);
+  }, [classId, topicsParam, count]);
 
   const handleAnswer = async (choice: string) => {
     if (selected) return;
@@ -83,7 +87,28 @@ const PracticeTopicPage = () => {
         <Header />
         <div className="practice">
           <div className="container">
-            <div className="loading">Loading questions...</div>
+            <Loader />
+          </div>
+        </div>
+      </>
+    );
+
+  if (questions.length === 0)
+    return (
+      <>
+        <Header />
+        <div className="practice">
+          <div className="container">
+            <div className="coming-soon-box">
+              <h2>No questions found</h2>
+              <p>No questions available for the selected topics yet.</p>
+              <button
+                className="back-btn"
+                onClick={() => router.push(`/practice/${classId}`)}
+              >
+                <FaArrowLeft /> Go Back
+              </button>
+            </div>
           </div>
         </div>
       </>
@@ -103,7 +128,6 @@ const PracticeTopicPage = () => {
                 >
                   <FaArrowLeft /> Back
                 </button>
-                <h1>{topic?.label}</h1>
               </div>
 
               <div className="question-card">
@@ -186,7 +210,7 @@ const PracticeTopicPage = () => {
           {done && (
             <div className="results-wrapper">
               <div className="results-card">
-                <h2>Session Complete! 🎉</h2>
+                <h2>Session Complete!</h2>
                 <p className="results-score">
                   {score} / {questions.length} correct
                 </p>
@@ -195,7 +219,7 @@ const PracticeTopicPage = () => {
                     className="restart-btn"
                     onClick={() => router.push(`/practice/${classId}`)}
                   >
-                    Choose Another Topic
+                    Practice Again
                   </button>
                   <a href="/dashboard" className="dashboard-btn">
                     Back to Dashboard
@@ -268,4 +292,10 @@ const PracticeTopicPage = () => {
   );
 };
 
-export default PracticeTopicPage;
+const PracticeSessionPage = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <SessionInner />
+  </Suspense>
+);
+
+export default PracticeSessionPage;
