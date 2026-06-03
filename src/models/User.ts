@@ -49,6 +49,11 @@ User.init(
       type: DataTypes.JSON,
       defaultValue: [],
     },
+    role: {
+      type: DataTypes.ENUM("student", "teacher", "admin"),
+      defaultValue: "student",
+      allowNull: false,
+    },
   },
   {
     sequelize,
