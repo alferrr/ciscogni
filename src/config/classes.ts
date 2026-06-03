@@ -1,0 +1,100 @@
+import {
+  FaCode,
+  FaBrain,
+  FaBook,
+  FaBolt,
+  FaBug,
+  FaListCheck,
+} from "react-icons/fa6";
+
+export const CLASSES = [
+  {
+    id: "prog1",
+    label: "Programming 1",
+    available: true,
+    topics: [
+      {
+        id: "intro_programming",
+        label: "Intro to Programming",
+        color: "#1752f0",
+        icon: "FaCode",
+      },
+      {
+        id: "c_structure",
+        label: "C Structure & Expressions",
+        color: "#7c3aed",
+        icon: "FaBrain",
+      },
+      { id: "functions", label: "Functions", color: "#059669", icon: "FaBolt" },
+      {
+        id: "builtin_functions",
+        label: "Built-in Functions",
+        color: "#0891b2",
+        icon: "FaBook",
+      },
+      {
+        id: "control_structure_1",
+        label: "Control Structure I",
+        color: "#dc2626",
+        icon: "FaListCheck",
+      },
+      {
+        id: "control_structure_2",
+        label: "Control Structure II",
+        color: "#d97706",
+        icon: "FaListCheck",
+      },
+      {
+        id: "testing_debugging",
+        label: "Testing & Debugging",
+        color: "#db2777",
+        icon: "FaBug",
+      },
+      {
+        id: "arrays_pointers",
+        label: "Arrays & Pointers",
+        color: "#0891b2",
+        icon: "FaCode",
+      },
+    ],
+    modes: [
+      {
+        id: "midterms",
+        label: "Midterms",
+        description:
+          "Intro to Programming, Expressions, Functions, Built-ins, Control Structure I",
+        color: "#1752f0",
+      },
+      {
+        id: "finals",
+        label: "Finals",
+        description:
+          "Everything in Midterms + Loops, Debugging, Arrays & Pointers",
+        color: "#7c3aed",
+      },
+    ],
+  },
+  {
+    id: "prog2",
+    label: "Programming 2",
+    available: false,
+    topics: [],
+    modes: [],
+  },
+  {
+    id: "dsa",
+    label: "Data Structures & Algorithms",
+    available: false,
+    topics: [],
+    modes: [],
+  },
+];
+
+export const iconMap: Record<string, any> = {
+  FaCode,
+  FaBrain,
+  FaBook,
+  FaBolt,
+  FaBug,
+  FaListCheck,
+};
