@@ -77,9 +77,62 @@ export const CLASSES = [
   {
     id: "prog2",
     label: "Programming 2",
-    available: false,
-    topics: [],
-    modes: [],
+    available: true,
+    topics: [
+      {
+        id: "pointers_arrays",
+        label: "Pointers & Arrays",
+        color: "#1752f0",
+        icon: "FaCode",
+      },
+      {
+        id: "dynamic_memory",
+        label: "Dynamic Memory",
+        color: "#7c3aed",
+        icon: "FaBrain",
+      },
+      {
+        id: "array_operations",
+        label: "Array Operations",
+        color: "#059669",
+        icon: "FaBolt",
+      },
+      {
+        id: "sorting_searching",
+        label: "Sorting & Searching",
+        color: "#0891b2",
+        icon: "FaListCheck",
+      },
+      {
+        id: "libraries",
+        label: "Program Structure & Libraries",
+        color: "#dc2626",
+        icon: "FaBook",
+      },
+      {
+        id: "structures",
+        label: "Structures & Unions",
+        color: "#d97706",
+        icon: "FaCode",
+      },
+    ],
+    modes: [
+      {
+        id: "midterms",
+        label: "Midterms",
+        description:
+          "Pointers, Dynamic Memory, Arrays, Sorting, Libraries, Structures",
+        color: "#1752f0",
+        topics: [
+          "pointers_arrays",
+          "dynamic_memory",
+          "array_operations",
+          "sorting_searching",
+          "libraries",
+          "structures",
+        ],
+      },
+    ],
   },
   {
     id: "dsa",

@@ -47,8 +47,17 @@ const CompetitiveModePage = () => {
   useEffect(() => {
     const fetch = async () => {
       try {
-        const { data } = await axios.get(`/api/questions?mode=${modeId}`);
-        const shuffled = data.sort(() => Math.random() - 0.5).slice(0, 30);
+        const modeConfig = cls?.modes.find((m) => m.id === modeId);
+        const topicsFilter = (modeConfig as any)?.topics;
+
+        const url = topicsFilter
+          ? `/api/questions/bulk?topics=${topicsFilter.join(",")}&count=30&mode=midterms`
+          : `/api/questions?mode=${modeId}`;
+
+        const { data } = await axios.get(url);
+        const shuffled = Array.isArray(data)
+          ? data.sort(() => Math.random() - 0.5).slice(0, 30)
+          : data;
         setQuestions(shuffled);
       } catch (err) {
         console.error(err);
