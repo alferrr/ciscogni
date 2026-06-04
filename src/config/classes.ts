@@ -115,6 +115,24 @@ export const CLASSES = [
         color: "#d97706",
         icon: "FaCode",
       },
+      {
+        id: "adt_list",
+        label: "ADT List",
+        color: "#db2777",
+        icon: "FaListCheck",
+      },
+      {
+        id: "linked_list",
+        label: "Linked List",
+        color: "#0891b2",
+        icon: "FaBolt",
+      },
+      {
+        id: "file_operations",
+        label: "File Operations",
+        color: "#059669",
+        icon: "FaBook",
+      },
     ],
     modes: [
       {
@@ -130,6 +148,24 @@ export const CLASSES = [
           "sorting_searching",
           "libraries",
           "structures",
+        ],
+      },
+      {
+        id: "finals",
+        label: "Finals",
+        description:
+          "Everything in Midterms + ADT List, Linked List, File Operations",
+        color: "#7c3aed",
+        topics: [
+          "pointers_arrays",
+          "dynamic_memory",
+          "array_operations",
+          "sorting_searching",
+          "libraries",
+          "structures",
+          "adt_list",
+          "linked_list",
+          "file_operations",
         ],
       },
     ],
