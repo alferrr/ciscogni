@@ -11,7 +11,7 @@ import Cookies from "js-cookie";
 
 const Login = () => {
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const [studentId, setStudentId] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { showToast } = useToast();
@@ -21,7 +21,10 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const { data } = await axios.post("/api/auth/login", { email, password });
+      const { data } = await axios.post("/api/auth/login", {
+        studentId,
+        password,
+      });
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
@@ -52,15 +55,15 @@ const Login = () => {
           <h2>
             Welcome to <span>Ciscogni</span>
           </h2>
-          <p>Enter your email and password to continue.</p>
+          <p>Sign in with your student ID and default password.</p>
 
           <div className="input">
-            <p>Email</p>
+            <p>Student ID</p>
             <input
-              type="email"
-              placeholder="19020241@usc.edu.ph"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="text"
+              placeholder="19020241"
+              value={studentId}
+              onChange={(e) => setStudentId(e.target.value)}
               required
             />
           </div>
@@ -69,21 +72,23 @@ const Login = () => {
             <p>Password</p>
             <input
               type="password"
-              placeholder="*******"
+              placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
 
+          {/* <div className="password-hint">
+            Default password is your <strong>last name + student ID</strong>
+            <br />
+            Example: <strong>mercado19020241</strong>
+          </div> */}
+
           <button type="submit" disabled={loading}>
             {loading ? "Signing in..." : "Sign In"}
           </button>
         </form>
-
-        <p className="signup">
-          Don&apos;t have an account? <a href="/register">Sign Up</a>
-        </p>
       </div>
     </div>
   );

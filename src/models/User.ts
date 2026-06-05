@@ -54,6 +54,12 @@ User.init(
       defaultValue: "student",
       allowNull: false,
     },
+
+    studentId: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      unique: true,
+    },
   },
   {
     sequelize,

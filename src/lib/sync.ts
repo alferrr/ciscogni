@@ -4,6 +4,7 @@ import "../models/Question";
 import "../models/Attempt";
 import "../models/Session";
 import "../models/associations";
+import "../models/AllowedStudent";
 
 let synced = false;
 

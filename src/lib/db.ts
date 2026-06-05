@@ -6,7 +6,12 @@ const sequelize = new Sequelize(
   process.env.DB_PASSWORD!,
   {
     host: process.env.DB_HOST!,
-    dialect: "mysql",
+    port: parseInt(process.env.DB_PORT || "3306"),
+    dialect: "mariadb",
+    dialectOptions: {
+      allowPublicKeyRetrieval: true,
+      connectTimeout: 20000,
+    },
     logging: false,
   },
 );

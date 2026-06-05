@@ -10,31 +10,25 @@ import axios from "axios";
 
 const Register = () => {
   const router = useRouter();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [year, setYear] = useState("");
-  const [course, setCourse] = useState("");
-  const [loading, setLoading] = useState(false);
   const { showToast } = useToast();
+  const [studentId, setStudentId] = useState("");
+  const [course, setCourse] = useState("");
+  const [year, setYear] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      await axios.post("/api/auth/register", {
-        name,
-        email,
-        password,
-        year,
-        course,
-      });
-
-      showToast("Login with your credentials", "success");
+      await axios.post("/api/auth/register", { studentId, course, year });
+      showToast("Account created! You can now sign in.", "success");
       router.push("/");
     } catch (err: any) {
-      showToast("Something went wrong", "error");
+      showToast(
+        err.response?.data?.message || "Something went wrong.",
+        "error",
+      );
     } finally {
       setLoading(false);
     }
@@ -53,70 +47,52 @@ const Register = () => {
           <h2>
             Create an <span>Account</span>
           </h2>
-          <p>Fill in the details below to get started.</p>
+          <p>Enter your student ID to get started.</p>
 
           <div className="input">
-            <p>Name</p>
+            <p>Student ID</p>
             <input
               type="text"
-              placeholder="Juan Dela Cruz"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              placeholder="19020241"
+              value={studentId}
+              onChange={(e) => setStudentId(e.target.value)}
               required
             />
           </div>
 
           <div className="input">
-            <p>Email</p>
+            <p>Course</p>
             <input
-              type="email"
-              placeholder="19020241@usc.edu.ph"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="text"
+              placeholder="BSIT"
+              value={course}
+              onChange={(e) => setCourse(e.target.value)}
               required
             />
           </div>
 
           <div className="input">
-            <p>Password</p>
-            <input
-              type="password"
-              placeholder="*******"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+            <p>Year</p>
+            <select
+              value={year}
+              onChange={(e) => setYear(e.target.value)}
               required
-            />
+            >
+              <option value="">Select year</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+            </select>
           </div>
 
-          <div className="form-group">
-            <div className="input select">
-              <p>Year</p>
-              <select
-                value={year}
-                onChange={(e) => setYear(e.target.value)}
-                required
-              >
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-              </select>
-            </div>
-
-            <div className="input">
-              <p>Course</p>
-              <input
-                type="text"
-                placeholder="BSIT"
-                value={course}
-                onChange={(e) => setCourse(e.target.value)}
-                required
-              />
-            </div>
-          </div>
+          <p className="password-hint">
+            Your default password is your{" "}
+            <strong>last name + student ID</strong> (e.g. mercado19020241)
+          </p>
 
           <button type="submit" disabled={loading}>
-            {loading ? "Creating account..." : "Sign Up"}
+            {loading ? "Creating account..." : "Create Account"}
           </button>
         </form>
 

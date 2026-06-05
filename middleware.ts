@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 export function middleware(req: NextRequest) {
   const token = req.cookies.get("token")?.value;
+  const { pathname } = req.nextUrl;
+
+  if (pathname.startsWith("/register")) {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
 
   if (!token) {
     return NextResponse.redirect(new URL("/", req.url));
@@ -12,12 +17,12 @@ export function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
+    "/register",
     "/dashboard/:path*",
     "/practice/:path*",
     "/competitive/:path*",
     "/daily/:path*",
     "/leaderboard/:path*",
-    "/progress/:path*",
     "/profile/:path*",
     "/admin/:path*",
   ],
