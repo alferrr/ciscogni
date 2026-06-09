@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/src/app/globals.css"],"sourcesContent":["* {\n  padding: 0;\n  margin: 0;\n  box-sizing: border-box;\n}\n\n:root {\n  --bg: #fff;\n  --secondary: #f4f6ff;\n  --input: #e6edff;\n  --blue: #1752f0;\n  --text: #000;\n  --border: #e0e6f0;\n  --muted: #888;\n  --success: #22c55e;\n  --warning: #f97316;\n\n  --headings: var(--font-dm-sans), sans-serif;\n  --body: var(--font-inter), sans-serif;\n}\n\nhtml.dark {\n  --bg: #191a1f;\n  --secondary: #23242a;\n  --input: #2b2b2b;\n  --text: #fff;\n  --border: #2e2e3a;\n  --muted: #aaa;\n}\n\nbody {\n  font-family: var(--body);\n  background: var(--bg);\n  color: var(--text);\n  transition:\n    background 0.2s,\n    color 0.2s;\n}\n\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n  font-family: var(--headings);\n}\n\ninput,\nselect {\n  font-family: var(--body);\n  color: var(--text);\n}\n"],"names":[],"mappings":"AAAA;;;;;;AAMA;;;;;;;;;;;;;;AAeA;;;;;;;;;AASA;;;;;;;AASA;;;;AASA"}}]
+}

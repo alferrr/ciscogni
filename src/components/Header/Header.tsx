@@ -13,12 +13,14 @@ const Header = () => {
   const [menuVisible, setMenuVisible] = useState(false);
   const [streak, setStreak] = useState<number | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const user = localStorage.getItem("user");
     if (user) {
       const parsed = JSON.parse(user);
       setStreak(parsed.streak || 0);
+      setIsAdmin(parsed.role == "admin" ? true : false);
     } else {
       setStreak(0);
     }
@@ -94,6 +96,10 @@ const Header = () => {
               </button>
 
               <button onMouseDown={handleLogout}>Logout</button>
+
+              {isAdmin && (
+                <button onMouseDown={() => router.push("/admin")}>Admin</button>
+              )}
             </div>
           )}
         </div>

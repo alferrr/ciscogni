@@ -1,0 +1,65 @@
+/* [project]/src/components/ThemeToggle/ThemeToggle.css [app-client] (css) */
+.theme-toggle {
+  position: relative;
+}
+
+.theme-icon-btn {
+  cursor: pointer;
+  color: var(--text);
+  background: none;
+  border: none;
+  border-radius: 8px;
+  justify-content: center;
+  align-items: center;
+  padding: 6px;
+  font-size: 20px;
+  transition: background .2s;
+  display: flex;
+}
+
+.theme-icon-btn:hover {
+  background: var(--bg);
+}
+
+.theme-dropdown {
+  background: var(--secondary);
+  z-index: 100;
+  border-radius: 12px;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 130px;
+  padding: 4px;
+  display: flex;
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  overflow: hidden;
+  box-shadow: 0 4px 20px #0000001f;
+}
+
+.theme-option {
+  color: var(--text);
+  font-family: var(--body);
+  cursor: pointer;
+  text-align: left;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  font-size: 14px;
+  transition: background .15s;
+  display: flex;
+}
+
+.theme-option:hover {
+  background: var(--bg);
+}
+
+.theme-option.active {
+  color: var(--blue);
+  font-weight: 600;
+}
+
+/*# sourceMappingURL=src_components_ThemeToggle_ThemeToggle_css_0w3-wzy._.single.css.map*/
