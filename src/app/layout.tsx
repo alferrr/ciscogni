@@ -3,6 +3,8 @@ import { DM_Sans, Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { ToastProvider } from "@/context/ToastContext";
+import AuthInterceptor from "@/components/AuthInterceptor/AuthInterceptor";
+import OnboardingGate from "@/components/OnboardingGate/OnboardingGate";
 const dmSans = DM_Sans({
   subsets: ["latin"],
   variable: "--font-dm-sans",
@@ -51,7 +53,11 @@ export default function RootLayout({
       </head>
       <body suppressHydrationWarning>
         <ThemeProvider>
-          <ToastProvider>{children}</ToastProvider>
+          <ToastProvider>
+            <AuthInterceptor />
+            <OnboardingGate />
+            {children}
+          </ToastProvider>
         </ThemeProvider>
       </body>
     </html>

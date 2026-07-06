@@ -20,6 +20,7 @@ const Daily = () => {
   const [done, setDone] = useState(false);
   const [score, setScore] = useState(0);
   const [alreadyTaken, setAlreadyTaken] = useState(false);
+  const [xpEarned, setXpEarned] = useState(0);
 
   useEffect(() => {
     const fetchDaily = async () => {
@@ -57,7 +58,8 @@ const Daily = () => {
 
   const handleNext = async () => {
     if (current + 1 >= questions.length) {
-      await axios.post("/api/streak");
+      const { data } = await axios.post("/api/streak");
+      setXpEarned(data.xpEarned ?? 50);
       setDone(true);
       return;
     }
@@ -167,7 +169,7 @@ const Daily = () => {
                     <div className="feedback-header">
                       {result.isCorrect ? (
                         <>
-                          <FaCircleCheck /> Correct! +10 XP
+                          <FaCircleCheck /> Correct!
                         </>
                       ) : (
                         <>
@@ -195,7 +197,7 @@ const Daily = () => {
               <p className="results-score">
                 {score} / {questions.length} correct
               </p>
-              <p className="results-xp">+{score * 10} XP earned</p>
+              <p className="results-xp">+{xpEarned} XP earned</p>
               <p className="streak-msg">Your streak has been updated!</p>
               <div className="results-actions">
                 <a href="/practice" className="restart-btn">

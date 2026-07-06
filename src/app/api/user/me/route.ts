@@ -19,10 +19,18 @@ export async function GET(req: NextRequest) {
     const yesterday = new Date(Date.now() - 86400000)
       .toISOString()
       .split("T")[0];
+    const twoDaysAgo = new Date(Date.now() - 2 * 86400000)
+      .toISOString()
+      .split("T")[0];
     const lastDaily = user.getDataValue("lastDailyAt");
 
-    // if last daily was not today and not yesterday, streak is broken
-    if (lastDaily && lastDaily !== today && lastDaily !== yesterday) {
+    // one grace day: streak only breaks after missing 2 full days
+    if (
+      lastDaily &&
+      lastDaily !== today &&
+      lastDaily !== yesterday &&
+      lastDaily !== twoDaysAgo
+    ) {
       await user.update({ streak: 0 });
     }
 

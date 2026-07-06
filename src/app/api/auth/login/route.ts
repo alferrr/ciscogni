@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
       { expiresIn: "7d" },
     );
 
-    return NextResponse.json({
+    const res = NextResponse.json({
       message: "Login successful.",
       token,
       user: {
@@ -84,6 +84,14 @@ export async function POST(req: NextRequest) {
         role: user.getDataValue("role"),
       },
     });
+
+    res.cookies.set("token", token, {
+      path: "/",
+      maxAge: 7 * 24 * 60 * 60,
+      sameSite: "lax",
+    });
+
+    return res;
   } catch (err) {
     console.error("Login error:", err);
     return NextResponse.json(

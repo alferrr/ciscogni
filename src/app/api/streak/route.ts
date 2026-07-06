@@ -15,12 +15,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });
 
     const today = new Date().toISOString().split("T")[0];
+    const DAILY_XP_BONUS = 50;
     await user.update({
       streak: user.getDataValue("streak") + 1,
       lastDailyAt: today,
+      xp: user.getDataValue("xp") + DAILY_XP_BONUS,
     });
 
-    return NextResponse.json({ streak: user.getDataValue("streak") });
+    return NextResponse.json({
+      streak: user.getDataValue("streak"),
+      xp: user.getDataValue("xp"),
+      xpEarned: DAILY_XP_BONUS,
+    });
   } catch (err) {
     return NextResponse.json(
       { message: "Server error", error: String(err) },
