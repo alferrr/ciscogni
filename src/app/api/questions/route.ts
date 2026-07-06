@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { syncDB } from "@/lib/sync";
 import { Op } from "sequelize";
 import Question from "@/models/Question";
+import { shuffleQuestionChoices } from "@/lib/shuffle";
 
 export async function GET(req: NextRequest) {
   await syncDB();
@@ -17,5 +18,5 @@ export async function GET(req: NextRequest) {
   if (topics) where.topic = { [Op.in]: topics.split(",") };
 
   const questions = await Question.findAll({ where });
-  return NextResponse.json(questions);
+  return NextResponse.json(shuffleQuestionChoices(questions));
 }

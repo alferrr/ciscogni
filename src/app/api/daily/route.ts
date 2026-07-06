@@ -4,6 +4,7 @@ import Question from "@/models/Question";
 import User from "@/models/User";
 import { getAuthPayload } from "@/lib/auth";
 import sequelize from "@/lib/db";
+import { shuffleQuestionChoices } from "@/lib/shuffle";
 
 export async function GET(req: NextRequest) {
   await syncDB();
@@ -28,7 +29,10 @@ export async function GET(req: NextRequest) {
       limit: 5,
     });
 
-    return NextResponse.json({ alreadyTaken: false, questions });
+    return NextResponse.json({
+      alreadyTaken: false,
+      questions: shuffleQuestionChoices(questions),
+    });
   } catch (err) {
     return NextResponse.json(
       { message: "Server error", error: String(err) },

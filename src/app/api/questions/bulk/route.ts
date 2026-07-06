@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { syncDB } from "@/lib/sync";
 import Question from "@/models/Question";
 import { Op } from "sequelize";
+import { shuffleArray, shuffleQuestionChoices } from "@/lib/shuffle";
 
 export async function GET(req: NextRequest) {
   await syncDB();
@@ -25,13 +26,9 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    const shuffled = [...questions];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
+    const shuffled = shuffleArray(questions).slice(0, count);
 
-    return NextResponse.json(shuffled.slice(0, count));
+    return NextResponse.json(shuffleQuestionChoices(shuffled));
   } catch (err) {
     return NextResponse.json(
       { message: "Server error", error: String(err) },

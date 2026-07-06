@@ -5,6 +5,7 @@ import Header from "@/components/Header/Header";
 import "./leaderboard.css";
 import { FaTrophy, FaMedal, FaStar, FaFire } from "react-icons/fa6";
 import LeaderboardSkeleton from "@/components/Skeleton/LeaderboardSkeleton";
+import { useRefetchOnShow } from "@/hooks/useRefetchOnShow";
 
 const Leaderboard = () => {
   const [users, setUsers] = useState<any[]>([]);
@@ -28,11 +29,7 @@ const Leaderboard = () => {
     fetchLeaderboard();
   }, [fetchLeaderboard]);
 
-  useEffect(() => {
-    const handleFocus = () => fetchLeaderboard();
-    window.addEventListener("focus", handleFocus);
-    return () => window.removeEventListener("focus", handleFocus);
-  }, [fetchLeaderboard]);
+  useRefetchOnShow(fetchLeaderboard);
 
   const getRankIcon = (index: number) => {
     if (index === 0) return <FaTrophy className="rank-icon gold" />;

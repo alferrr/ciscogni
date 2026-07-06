@@ -172,10 +172,17 @@ const CompetitiveModePage = () => {
       </>
     );
 
+  const blockCopy = (e: React.SyntheticEvent) => e.preventDefault();
+
   return (
     <>
       <Header />
-      <div className="competitive">
+      <div
+        className="competitive no-copy"
+        onCopy={blockCopy}
+        onCut={blockCopy}
+        onContextMenu={blockCopy}
+      >
         <div className="container">
           {!done && q && (
             <div className="question-card">

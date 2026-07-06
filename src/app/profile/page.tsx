@@ -2,6 +2,7 @@
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import Header from "@/components/Header/Header";
+import { useRefetchOnShow } from "@/hooks/useRefetchOnShow";
 import "./profile.css";
 import {
   FaBullseye,
@@ -184,6 +185,14 @@ const Profile = () => {
     fetchProgress();
     fetchAchievements();
   }, [fetchUser, fetchProgress, fetchAchievements]);
+
+  useRefetchOnShow(
+    useCallback(() => {
+      fetchUser();
+      fetchProgress();
+      fetchAchievements();
+    }, [fetchUser, fetchProgress, fetchAchievements]),
+  );
 
   if (loading)
     return (

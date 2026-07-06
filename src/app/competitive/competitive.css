@@ -1,3 +1,9 @@
+.competitive.no-copy {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+}
+
 .competitive {
   padding: 3rem 0;
   display: flex;

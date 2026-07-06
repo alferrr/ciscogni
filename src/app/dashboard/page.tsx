@@ -16,6 +16,7 @@ import { MdDataArray } from "react-icons/md";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import DashboardSkeleton from "@/components/Skeleton/DashboardSkeleton";
+import { useRefetchOnShow } from "@/hooks/useRefetchOnShow";
 
 const lessons = [
   { label: "Loops & Iteration", color: "#1752f0", icon: <FaCode /> },
@@ -64,14 +65,12 @@ const Dashboard = () => {
     fetchSessions();
   }, [fetchUser, fetchSessions]);
 
-  useEffect(() => {
-    const handleFocus = () => {
+  useRefetchOnShow(
+    useCallback(() => {
       fetchUser();
       fetchSessions();
-    };
-    window.addEventListener("focus", handleFocus);
-    return () => window.removeEventListener("focus", handleFocus);
-  }, [fetchUser, fetchSessions]);
+    }, [fetchUser, fetchSessions]),
+  );
 
   if (pageLoading)
     return (
