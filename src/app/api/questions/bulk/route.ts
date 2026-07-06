@@ -7,9 +7,9 @@ export async function GET(req: NextRequest) {
   await syncDB();
 
   const { searchParams } = new URL(req.url);
-  const topics = searchParams.get("topics")?.split(",") ?? [];
-  const count = Math.min(parseInt(searchParams.get("count") ?? "10"), 50);
-  const mode = searchParams.get("mode") ?? "practice";
+  const topics = searchParams.get("topics")?.split(",").filter(Boolean) ?? [];
+  const parsedCount = parseInt(searchParams.get("count") ?? "10");
+  const count = Math.min(Math.max(isNaN(parsedCount) ? 10 : parsedCount, 1), 50);
 
   if (topics.length === 0) {
     return NextResponse.json(
@@ -22,21 +22,16 @@ export async function GET(req: NextRequest) {
     const questions = await Question.findAll({
       where: {
         topic: { [Op.in]: topics },
-        mode,
       },
     });
 
-    let pool = [...questions];
-
-    if (questions.length < count) {
-      while (pool.length < count) {
-        pool = [...pool, ...questions];
-      }
+    const shuffled = [...questions];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
 
-    const shuffled = pool.sort(() => Math.random() - 0.5).slice(0, count);
-
-    return NextResponse.json(shuffled);
+    return NextResponse.json(shuffled.slice(0, count));
   } catch (err) {
     return NextResponse.json(
       { message: "Server error", error: String(err) },

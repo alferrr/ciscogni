@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
+import { getAuthPayload } from "@/lib/auth";
 import { syncDB } from "@/lib/sync";
 import Attempt from "@/models/Attempt";
 import User from "@/models/User";
@@ -9,11 +9,9 @@ export async function POST(req: NextRequest) {
   await syncDB();
 
   try {
-    const token = req.cookies.get("token")?.value;
-    if (!token)
+    const decoded: any = getAuthPayload(req);
+    if (!decoded)
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-
-    const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
     const { questionId, selectedAnswer, xpEarned } = await req.json();
 
     const question = await Question.findOne({ where: { id: questionId } });

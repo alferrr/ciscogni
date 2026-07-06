@@ -64,6 +64,13 @@ export const CLASSES = [
         description:
           "Intro to Programming, Expressions, Functions, Built-ins, Control Structure I",
         color: "#1752f0",
+        topics: [
+          "intro_programming",
+          "c_structure",
+          "functions",
+          "builtin_functions",
+          "control_structure_1",
+        ],
       },
       {
         id: "finals",
@@ -71,6 +78,16 @@ export const CLASSES = [
         description:
           "Everything in Midterms + Loops, Debugging, Arrays & Pointers",
         color: "#7c3aed",
+        topics: [
+          "intro_programming",
+          "c_structure",
+          "functions",
+          "builtin_functions",
+          "control_structure_1",
+          "control_structure_2",
+          "testing_debugging",
+          "arrays_pointers",
+        ],
       },
     ],
   },

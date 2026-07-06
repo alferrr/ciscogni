@@ -21,7 +21,8 @@ const SessionInner = () => {
   const classId = params?.class as string;
   const topicsParam = searchParams?.get("topics") ?? "";
   const countParam = searchParams?.get("count") ?? "10";
-  const count = Math.min(parseInt(countParam), 50);
+  const parsedCount = parseInt(countParam);
+  const count = Math.min(isNaN(parsedCount) ? 10 : parsedCount, 50);
 
   const [questions, setQuestions] = useState<any[]>([]);
   const [current, setCurrent] = useState(0);
@@ -33,12 +34,15 @@ const SessionInner = () => {
   const [results, setResults] = useState<any[]>([]);
 
   useEffect(() => {
-    if (!classId || !topicsParam) return;
+    if (!classId || !topicsParam) {
+      setLoading(false);
+      return;
+    }
 
     const fetch = async () => {
       try {
         const { data } = await axios.get(
-          `/api/questions/bulk?topics=${topicsParam}&count=${count}&mode=practice`,
+          `/api/questions/bulk?topics=${topicsParam}&count=${count}`,
         );
         setQuestions(data);
       } catch (err) {

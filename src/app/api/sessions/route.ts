@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
+import { getAuthPayload } from "@/lib/auth";
 import { syncDB } from "@/lib/sync";
 import Session from "@/models/Session";
 
@@ -7,11 +7,9 @@ export async function POST(req: NextRequest) {
   await syncDB();
 
   try {
-    const token = req.cookies.get("token")?.value;
-    if (!token)
+    const decoded: any = getAuthPayload(req);
+    if (!decoded)
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-
-    const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
     const { mode, score, total, xpEarned } = await req.json();
 
     const session = await Session.create({
@@ -35,11 +33,9 @@ export async function GET(req: NextRequest) {
   await syncDB();
 
   try {
-    const token = req.cookies.get("token")?.value;
-    if (!token)
+    const decoded: any = getAuthPayload(req);
+    if (!decoded)
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-
-    const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
 
     const sessions = await Session.findAll({
       where: { userId: decoded.id },

@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
+import { getAuthPayload } from "@/lib/auth";
 import { syncDB } from "@/lib/sync";
 import User from "@/models/User";
 
 const isAdmin = async (req: NextRequest) => {
-  const token = req.cookies.get("token")?.value;
-  if (!token) return false;
-  const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
+  const decoded: any = getAuthPayload(req);
+  if (!decoded) return false;
   const user = await User.findOne({ where: { id: decoded.id } });
   return user?.getDataValue("role") === "admin";
 };

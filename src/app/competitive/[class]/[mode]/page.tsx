@@ -41,17 +41,15 @@ const CompetitiveModePage = () => {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const timeLeftRef = useRef(15);
 
-  if (!classId) return null;
-  if (!modeId) return null;
-
   useEffect(() => {
+    if (!classId || !modeId) return;
     const fetch = async () => {
       try {
         const modeConfig = cls?.modes.find((m) => m.id === modeId);
         const topicsFilter = (modeConfig as any)?.topics;
 
         const url = topicsFilter
-          ? `/api/questions/bulk?topics=${topicsFilter.join(",")}&count=30&mode=midterms`
+          ? `/api/questions/bulk?topics=${topicsFilter.join(",")}&count=30`
           : `/api/questions?mode=${modeId}`;
 
         const { data } = await axios.get(url);
@@ -154,6 +152,8 @@ const CompetitiveModePage = () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
   }, [current, questions.length, selected, done]);
+
+  if (!classId || !modeId) return null;
 
   const q = questions[current];
   const timerPercent = (timeLeft / 15) * 100;
