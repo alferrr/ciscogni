@@ -18,12 +18,14 @@ html.dark .admin-shell {
 }
 
 .admin-panel {
-  max-width: 1400px;
-  margin: 0 auto;
+  width: 100%;
+
+  margin: 0;
   background: var(--bg);
   border-radius: 28px;
   box-shadow: 0 20px 60px rgba(20, 20, 50, 0.12);
   overflow: hidden;
+  min-height: 100dvh;
 }
 
 .admin-topnav {
@@ -121,6 +123,7 @@ html.dark .admin-shell {
 
 .admin-content {
   background: var(--bg);
+  padding: 1.5rem;
 }
 
 .admin-page-title {
@@ -635,17 +638,6 @@ html.dark .admin-shell {
   }
 }
 
-.perf-chart-wrap {
-  position: relative;
-  width: 100%;
-}
-
-.perf-chart {
-  width: 100%;
-  height: auto;
-  overflow: visible;
-}
-
 .perf-empty {
   display: flex;
   align-items: center;
@@ -656,8 +648,6 @@ html.dark .admin-shell {
 }
 
 .perf-tooltip {
-  position: absolute;
-  transform: translate(-50%, -115%);
   background: var(--text);
   color: var(--bg);
   padding: 8px 12px;
@@ -665,7 +655,6 @@ html.dark .admin-shell {
   font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
-  pointer-events: none;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 
   .perf-tooltip-sub {

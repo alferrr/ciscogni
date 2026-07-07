@@ -5,7 +5,7 @@ import { syncDB } from "@/lib/sync";
 import sequelize from "@/lib/db";
 import User from "@/models/User";
 import Question from "@/models/Question";
-import Attempt from "@/models/Attempt";
+import PageView from "@/models/PageView";
 
 export async function GET(req: NextRequest) {
   await syncDB();
@@ -33,30 +33,34 @@ export async function GET(req: NextRequest) {
   rangeStart.setDate(rangeStart.getDate() - 6);
   rangeStart.setHours(0, 0, 0, 0);
 
-  const dailyRows = (await Attempt.findAll({
+  const trafficRows = (await PageView.findAll({
     attributes: [
       [sequelize.fn("DATE", sequelize.col("createdAt")), "day"],
-      [sequelize.fn("COUNT", sequelize.col("id")), "attempts"],
-      [sequelize.fn("SUM", sequelize.col("isCorrect")), "correct"],
+      [sequelize.fn("COUNT", sequelize.col("id")), "views"],
+      [
+        sequelize.fn(
+          "COUNT",
+          sequelize.fn("DISTINCT", sequelize.col("userId")),
+        ),
+        "users",
+      ],
     ],
     where: { createdAt: { [Op.gte]: rangeStart } },
     group: [sequelize.fn("DATE", sequelize.col("createdAt"))],
     raw: true,
-  })) as unknown as { day: string; attempts: string; correct: string }[];
+  })) as unknown as { day: string; views: string; users: string }[];
 
-  const daily = Array.from({ length: 7 }, (_, i) => {
+  const traffic = Array.from({ length: 7 }, (_, i) => {
     const d = new Date(rangeStart);
     d.setDate(rangeStart.getDate() + i);
     const key = d.toISOString().split("T")[0];
-    const row = dailyRows.find(
+    const row = trafficRows.find(
       (r) => new Date(r.day).toISOString().split("T")[0] === key,
     );
-    const attempts = row ? Number(row.attempts) : 0;
-    const correct = row ? Number(row.correct) : 0;
     return {
       label: d.toLocaleDateString("en-US", { weekday: "short" }),
-      attempts,
-      accuracy: attempts > 0 ? Math.round((correct / attempts) * 100) : 0,
+      views: row ? Number(row.views) : 0,
+      users: row ? Number(row.users) : 0,
     };
   });
 
@@ -71,6 +75,6 @@ export async function GET(req: NextRequest) {
     typeBreakdown: (typeCounts as unknown as { type: string; count: string }[]).map(
       (t) => ({ type: t.type, count: Number(t.count) }),
     ),
-    daily,
+    traffic,
   });
 }

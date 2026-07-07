@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import { ToastProvider } from "@/context/ToastContext";
 import AuthInterceptor from "@/components/AuthInterceptor/AuthInterceptor";
 import OnboardingGate from "@/components/OnboardingGate/OnboardingGate";
+import PageTracker from "@/components/PageTracker/PageTracker";
 const dmSans = DM_Sans({
   subsets: ["latin"],
   variable: "--font-dm-sans",
@@ -56,6 +57,7 @@ export default function RootLayout({
           <ToastProvider>
             <AuthInterceptor />
             <OnboardingGate />
+            <PageTracker />
             {children}
           </ToastProvider>
         </ThemeProvider>

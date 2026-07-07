@@ -3,6 +3,15 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
 import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import {
   FaUsers,
   FaCircleQuestion,
   FaBook,
@@ -14,10 +23,10 @@ import {
 } from "react-icons/fa6";
 import { CLASSES } from "@/config/classes";
 
-interface DailyPoint {
+interface TrafficPoint {
   label: string;
-  attempts: number;
-  accuracy: number;
+  views: number;
+  users: number;
 }
 
 interface Stats {
@@ -29,7 +38,7 @@ interface Stats {
     questions: number;
   };
   typeBreakdown: { type: string; count: number }[];
-  daily: DailyPoint[];
+  traffic: TrafficPoint[];
 }
 
 interface LeaderboardEntry {
@@ -48,107 +57,64 @@ const TYPE_META: Record<string, { label: string; icon: React.ReactNode }> = {
   concept: { label: "Concept", icon: <FaBrain /> },
 };
 
-const PerformanceChart = ({ daily }: { daily: DailyPoint[] }) => {
-  const chartW = 600;
-  const chartH = 170;
-  const top = 10;
-  const bottom = 40;
-  const viewH = top + chartH + bottom;
-
-  const maxAttempts = Math.max(1, ...daily.map((d) => d.attempts));
-  const slot = chartW / daily.length;
-  const barW = slot * 0.36;
-
-  const points = daily.map((d, i) => {
-    const cx = i * slot + slot / 2;
-    const barH = (d.attempts / maxAttempts) * chartH;
-    const barY = top + chartH - barH;
-    const lineY = top + chartH - (d.accuracy / 100) * chartH;
-    return { ...d, cx, barY, barH, lineY };
-  });
-
-  const linePath = points
-    .map((p, i) => `${i === 0 ? "M" : "L"} ${p.cx} ${p.lineY}`)
-    .join(" ");
-
-  const peak = points.reduce(
-    (max, p) => (p.attempts > max.attempts ? p : max),
-    points[0],
+const TrafficTooltip = ({ active, payload, label }: any) => {
+  if (!active || !payload?.length) return null;
+  const views = payload.find((p: any) => p.dataKey === "views")?.value ?? 0;
+  const users = payload.find((p: any) => p.dataKey === "users")?.value ?? 0;
+  return (
+    <div className="perf-tooltip">
+      {label}: {views} view{views === 1 ? "" : "s"}
+      <div className="perf-tooltip-sub">{users} logged-in visitor{users === 1 ? "" : "s"}</div>
+    </div>
   );
+};
 
-  const hasData = points.some((p) => p.attempts > 0);
+const TrafficChart = ({ traffic }: { traffic: TrafficPoint[] }) => {
+  const hasData = traffic.some((p) => p.views > 0);
+
+  if (!hasData) {
+    return <div className="perf-empty">No traffic recorded yet.</div>;
+  }
 
   return (
-    <div className="perf-chart-wrap">
-      <svg
-        className="perf-chart"
-        viewBox={`0 0 ${chartW} ${viewH}`}
-        preserveAspectRatio="none"
-        style={{ height: 240 }}
-      >
-        {points.map((p) => (
-          <rect
-            key={p.label}
-            x={p.cx - barW / 2}
-            y={p.barY}
-            width={barW}
-            height={p.barH}
-            rx={6}
-            fill="var(--blue)"
-            opacity={0.85}
-          />
-        ))}
-
-        {hasData && (
-          <path
-            d={linePath}
-            fill="none"
-            stroke="#22c55e"
-            strokeWidth={2.5}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        )}
-
-        {points.map((p) => (
-          <circle
-            key={`dot-${p.label}`}
-            cx={p.cx}
-            cy={p.lineY}
-            r={4}
-            fill="#22c55e"
-          />
-        ))}
-
-        {points.map((p) => (
-          <text
-            key={`label-${p.label}`}
-            x={p.cx}
-            y={top + chartH + 24}
-            textAnchor="middle"
-            fontSize={12}
-            fill="var(--muted)"
-          >
-            {p.label}
-          </text>
-        ))}
-      </svg>
-
-      {!hasData && <div className="perf-empty">No attempts logged yet.</div>}
-
-      {hasData && peak.attempts > 0 && (
-        <div
-          className="perf-tooltip"
-          style={{
-            left: `${(peak.cx / chartW) * 100}%`,
-            top: `${(peak.barY / viewH) * 100}%`,
-          }}
-        >
-          {peak.attempts} attempt{peak.attempts === 1 ? "" : "s"}
-          <div className="perf-tooltip-sub">{peak.accuracy}% accuracy</div>
-        </div>
-      )}
-    </div>
+    <ResponsiveContainer width="100%" height={260}>
+      <AreaChart data={traffic} margin={{ top: 10, right: 8, left: -16, bottom: 0 }}>
+        <defs>
+          <linearGradient id="viewsGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor="var(--blue)" stopOpacity={0.35} />
+            <stop offset="95%" stopColor="var(--blue)" stopOpacity={0} />
+          </linearGradient>
+        </defs>
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+        <XAxis
+          dataKey="label"
+          tick={{ fontSize: 12, fill: "var(--muted)" }}
+          axisLine={false}
+          tickLine={false}
+        />
+        <YAxis
+          allowDecimals={false}
+          tick={{ fontSize: 12, fill: "var(--muted)" }}
+          axisLine={false}
+          tickLine={false}
+        />
+        <Tooltip content={<TrafficTooltip />} />
+        <Area
+          type="monotone"
+          dataKey="views"
+          stroke="var(--blue)"
+          strokeWidth={2.5}
+          fill="url(#viewsGradient)"
+        />
+        <Area
+          type="monotone"
+          dataKey="users"
+          stroke="#22c55e"
+          strokeWidth={2}
+          fill="none"
+        />
+      </AreaChart>
+    </ResponsiveContainer>
   );
 };
 
@@ -226,22 +192,22 @@ const AdminDashboard = () => {
           <div className="dash-card">
             <div className="dash-card-header">
               <div>
-                <h2>Performance Chart</h2>
-                <p>Attempts and accuracy over the last 7 days.</p>
+                <h2>Website Traffic</h2>
+                <p>Page views over the last 7 days.</p>
               </div>
               <div className="chart-legend">
                 <span>
                   <span className="dot" style={{ background: "var(--blue)" }} />
-                  Attempts
+                  Page Views
                 </span>
                 <span>
                   <span className="dot" style={{ background: "#22c55e" }} />
-                  Accuracy
+                  Logged-in Visitors
                 </span>
               </div>
             </div>
             {stats ? (
-              <PerformanceChart daily={stats.daily} />
+              <TrafficChart traffic={stats.traffic} />
             ) : (
               <div className="perf-empty">Loading...</div>
             )}

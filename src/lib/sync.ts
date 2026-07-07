@@ -5,6 +5,7 @@ import "../models/Attempt";
 import "../models/Session";
 import "../models/associations";
 import "../models/AllowedStudent";
+import "../models/PageView";
 
 let synced = false;
 
