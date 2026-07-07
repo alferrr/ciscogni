@@ -69,6 +69,16 @@
       background: var(--blue);
       color: white;
     }
+
+    &.xp.active {
+      background: #eab308;
+      color: white;
+    }
+
+    &.streak.active {
+      background: #f97316;
+      color: white;
+    }
   }
 
   .your-rank-label {
@@ -264,6 +274,14 @@
     .xp-star {
       color: #eab308;
       font-size: 12px;
+    }
+
+    &.metric-xp {
+      color: #eab308;
+    }
+
+    &.metric-streak {
+      color: #f97316;
     }
   }
 

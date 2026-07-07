@@ -85,7 +85,7 @@ const Leaderboard = () => {
             {TABS.map((t) => (
               <button
                 key={t.id}
-                className={`lb-tab ${tab === t.id ? "active" : ""}`}
+                className={`lb-tab ${t.id} ${tab === t.id ? "active" : ""}`}
                 onClick={() => setTab(t.id)}
               >
                 {t.id === "year" && <FaGraduationCap />}
@@ -145,7 +145,7 @@ const Leaderboard = () => {
                     {u.course} — Year {u.year}
                   </p>
                 </div>
-                <div className="lb-xp">
+                <div className={`lb-xp ${tab === "streak" ? "metric-streak" : "metric-xp"}`}>
                   {metricIcon}
                   <span>{metricValue(u)}</span>
                 </div>
