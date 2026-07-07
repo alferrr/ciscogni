@@ -33,6 +33,44 @@
     }
   }
 
+  .lb-tabs {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--secondary);
+    padding: 4px;
+    border-radius: 999px;
+    align-self: center;
+  }
+
+  .lb-tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 18px;
+    border-radius: 999px;
+    border: none;
+    background: none;
+    color: var(--muted);
+    font-family: var(--body);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      background 0.2s,
+      color 0.2s;
+    white-space: nowrap;
+
+    &:hover {
+      color: var(--text);
+    }
+
+    &.active {
+      background: var(--blue);
+      color: white;
+    }
+  }
+
   .your-rank-label {
     font-size: 12px;
     font-weight: 600;

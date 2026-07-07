@@ -129,7 +129,7 @@ const AdminDashboard = () => {
       axios.get("/api/admin/stats").then(({ data }) => setStats(data)),
       axios
         .get("/api/leaderboard")
-        .then(({ data }) => setLeaderboard(data.slice(0, 5))),
+        .then(({ data }) => setLeaderboard(data.top.slice(0, 5))),
     ]).finally(() => setLoading(false));
   }, []);
 
