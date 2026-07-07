@@ -64,6 +64,7 @@ export async function POST(req: NextRequest) {
       {
         id: user.getDataValue("id"),
         studentId: user.getDataValue("studentId"),
+        role: user.getDataValue("role"),
       },
       process.env.JWT_SECRET!,
       { expiresIn: "7d" },

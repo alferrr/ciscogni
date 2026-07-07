@@ -3,9 +3,14 @@ import { syncDB } from "@/lib/sync";
 import Question from "@/models/Question";
 import { Op } from "sequelize";
 import { shuffleArray, shuffleQuestionChoices } from "@/lib/shuffle";
+import { getAuthPayload } from "@/lib/auth";
 
 export async function GET(req: NextRequest) {
   await syncDB();
+
+  const decoded = getAuthPayload(req);
+  if (!decoded)
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
   const { searchParams } = new URL(req.url);
   const topics = searchParams.get("topics")?.split(",").filter(Boolean) ?? [];

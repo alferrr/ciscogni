@@ -1,9 +1,14 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { syncDB } from "@/lib/sync";
 import User from "@/models/User";
+import { getAuthPayload } from "@/lib/auth";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   await syncDB();
+
+  const decoded = getAuthPayload(req);
+  if (!decoded)
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
   try {
     const users = await User.findAll({

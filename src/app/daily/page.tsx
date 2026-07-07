@@ -143,17 +143,20 @@ const Daily = () => {
                 <div className="choices">
                   {q.choices.map((choice: string) => {
                     let className = "choice";
-                    if (selected) {
-                      if (choice === result?.correctAnswer)
+                    if (result) {
+                      if (choice === result.correctAnswer)
                         className += " correct";
-                      else if (choice === selected && !result?.isCorrect)
+                      else if (choice === selected && !result.isCorrect)
                         className += " wrong";
                       else className += " disabled";
+                    } else if (selected) {
+                      className += " disabled";
                     }
                     return (
                       <button
                         key={choice}
                         className={className}
+                        disabled={!!selected}
                         onClick={() => handleAnswer(choice)}
                       >
                         {choice}
