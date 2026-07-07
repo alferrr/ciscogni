@@ -10,6 +10,7 @@ import {
   FaCircleCheck,
   FaCircleXmark,
 } from "react-icons/fa6";
+import QuizSkeleton from "@/components/Skeleton/QuizSkeleton";
 
 const Daily = () => {
   const [questions, setQuestions] = useState<any[]>([]);
@@ -74,11 +75,7 @@ const Daily = () => {
     return (
       <>
         <Header />
-        <div className="practice">
-          <div className="container">
-            <div className="loading">Loading daily challenge...</div>
-          </div>
-        </div>
+        <QuizSkeleton showHeader />
       </>
     );
 

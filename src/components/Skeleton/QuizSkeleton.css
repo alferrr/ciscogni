@@ -1,0 +1,58 @@
+.quiz-skeleton {
+  padding: 3rem 0;
+  display: flex;
+  justify-content: center;
+
+  .container {
+    width: 700px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  .qs-back-row {
+    display: flex;
+  }
+
+  .qs-header {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .qs-card {
+    background: var(--secondary);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  .qs-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .qs-text {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .qs-choices {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  @media (max-width: 768px) {
+    padding: 1.5rem 1rem;
+
+    .container {
+      width: 100%;
+    }
+  }
+}

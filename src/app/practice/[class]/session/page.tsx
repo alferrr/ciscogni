@@ -11,7 +11,7 @@ import {
 import { useRouter, useParams, useSearchParams } from "next/navigation";
 import "../../practice.css";
 import { Suspense } from "react";
-import Loader from "@/components/Loader/Loader";
+import QuizSkeleton from "@/components/Skeleton/QuizSkeleton";
 
 const SessionInner = () => {
   const router = useRouter();
@@ -89,11 +89,7 @@ const SessionInner = () => {
     return (
       <>
         <Header />
-        <div className="practice">
-          <div className="container">
-            <Loader />
-          </div>
-        </div>
+        <QuizSkeleton showBack />
       </>
     );
 

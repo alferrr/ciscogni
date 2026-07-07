@@ -4,6 +4,7 @@ import axios from "axios";
 import { FaTrash, FaPen, FaPlus, FaXmark } from "react-icons/fa6";
 import { useToast } from "@/context/ToastContext";
 import { CLASSES } from "@/config/classes";
+import AdminTableSkeleton from "@/components/Skeleton/AdminTableSkeleton";
 
 const TOPICS = [
   "intro_programming",
@@ -255,20 +256,7 @@ const AdminQuestions = () => {
               </tr>
             </thead>
             <tbody>
-              {loading && (
-                <tr>
-                  <td
-                    colSpan={6}
-                    style={{
-                      textAlign: "center",
-                      color: "var(--muted)",
-                      padding: "2rem",
-                    }}
-                  >
-                    Loading...
-                  </td>
-                </tr>
-              )}
+              {loading && <AdminTableSkeleton columns={6} />}
               {!loading && filtered.length === 0 && (
                 <tr>
                   <td

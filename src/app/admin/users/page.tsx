@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { FaTrash, FaMagnifyingGlass } from "react-icons/fa6";
 import { useToast } from "@/context/ToastContext";
+import AdminTableSkeleton from "@/components/Skeleton/AdminTableSkeleton";
 
 const AdminUsers = () => {
   const { showToast } = useToast();
@@ -67,16 +68,7 @@ const AdminUsers = () => {
               </tr>
             </thead>
             <tbody>
-              {loading && (
-                <tr>
-                  <td
-                    colSpan={8}
-                    style={{ textAlign: "center", color: "var(--muted)" }}
-                  >
-                    Loading...
-                  </td>
-                </tr>
-              )}
+              {loading && <AdminTableSkeleton columns={8} />}
               {filtered.map((u) => (
                 <tr key={u.id}>
                   <td>{u.name}</td>

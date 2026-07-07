@@ -22,6 +22,7 @@ import {
   FaFire,
 } from "react-icons/fa6";
 import { CLASSES } from "@/config/classes";
+import AdminDashboardSkeleton from "@/components/Skeleton/AdminDashboardSkeleton";
 
 interface TrafficPoint {
   label: string;
@@ -121,17 +122,15 @@ const TrafficChart = ({ traffic }: { traffic: TrafficPoint[] }) => {
 const AdminDashboard = () => {
   const [stats, setStats] = useState<Stats | null>(null);
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios
-      .get("/api/admin/stats")
-      .then(({ data }) => setStats(data))
-      .catch((err) => console.error(err));
-
-    axios
-      .get("/api/leaderboard")
-      .then(({ data }) => setLeaderboard(data.slice(0, 5)))
-      .catch((err) => console.error(err));
+    Promise.allSettled([
+      axios.get("/api/admin/stats").then(({ data }) => setStats(data)),
+      axios
+        .get("/api/leaderboard")
+        .then(({ data }) => setLeaderboard(data.slice(0, 5))),
+    ]).finally(() => setLoading(false));
   }, []);
 
   const totals = stats?.totals;
@@ -140,6 +139,8 @@ const AdminDashboard = () => {
     ...(stats?.typeBreakdown.map((t) => t.count) ?? [1]),
   );
   const availableClasses = CLASSES.filter((c) => c.available).length;
+
+  if (loading) return <AdminDashboardSkeleton />;
 
   return (
     <div>
@@ -209,7 +210,7 @@ const AdminDashboard = () => {
             {stats ? (
               <TrafficChart traffic={stats.traffic} />
             ) : (
-              <div className="perf-empty">Loading...</div>
+              <div className="perf-empty">Couldn&apos;t load traffic data.</div>
             )}
           </div>
 

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { FaCode, FaFire, FaTrophy, FaBolt } from "react-icons/fa6";
 import { useToast } from "@/context/ToastContext";
 import "./onboarding.css";
+import OnboardingSkeleton from "@/components/Skeleton/OnboardingSkeleton";
 
 const highlights = [
   {
@@ -73,7 +74,7 @@ const Onboarding = () => {
     }
   };
 
-  if (loading) return null;
+  if (loading) return <OnboardingSkeleton />;
 
   return (
     <div className="onboarding">

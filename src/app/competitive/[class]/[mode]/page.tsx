@@ -12,6 +12,7 @@ import {
 } from "react-icons/fa6";
 import { useRouter, useParams } from "next/navigation";
 import "../../competitive.css";
+import QuizSkeleton from "@/components/Skeleton/QuizSkeleton";
 
 const getXP = (timeLeft: number, isCorrect: boolean) => {
   if (!isCorrect) return 0;
@@ -164,11 +165,7 @@ const CompetitiveModePage = () => {
     return (
       <>
         <Header />
-        <div className="competitive">
-          <div className="container">
-            <div className="loading">Loading questions...</div>
-          </div>
-        </div>
+        <QuizSkeleton variant="timer" />
       </>
     );
 
