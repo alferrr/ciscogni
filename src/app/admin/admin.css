@@ -10,7 +10,6 @@
 .admin-shell {
   min-height: 100vh;
   width: 100%;
-  padding: 1.5rem;
   background: linear-gradient(135deg, #dbe4ff 0%, #e9defe 45%, #fde3ee 100%);
 }
 
@@ -33,6 +32,10 @@ html.dark .admin-shell {
   gap: 1.5rem;
   padding: 1.2rem 2rem;
   border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--bg);
 
   .admin-logo {
     display: flex;
@@ -117,7 +120,6 @@ html.dark .admin-shell {
 }
 
 .admin-content {
-  padding: 2rem;
   background: var(--bg);
 }
 
