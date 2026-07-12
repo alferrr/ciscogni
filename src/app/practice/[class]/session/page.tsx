@@ -12,6 +12,7 @@ import { useRouter, useParams, useSearchParams } from "next/navigation";
 import "../../practice.css";
 import { Suspense } from "react";
 import QuizSkeleton from "@/components/Skeleton/QuizSkeleton";
+import { CLASSES } from "@/config/classes";
 
 const SessionInner = () => {
   const router = useRouter();
@@ -20,6 +21,7 @@ const SessionInner = () => {
 
   const classId = params?.class as string;
   const topicsParam = searchParams?.get("topics") ?? "";
+  const mistakesMode = searchParams?.get("mistakes") === "1";
   const countParam = searchParams?.get("count") ?? "10";
   const parsedCount = parseInt(countParam);
   const count = Math.min(isNaN(parsedCount) ? 10 : parsedCount, 50);
@@ -34,16 +36,23 @@ const SessionInner = () => {
   const [results, setResults] = useState<any[]>([]);
 
   useEffect(() => {
-    if (!classId || !topicsParam) {
+    if (!classId || (!topicsParam && !mistakesMode)) {
       setLoading(false);
       return;
     }
 
     const fetch = async () => {
       try {
-        const { data } = await axios.get(
-          `/api/questions/bulk?topics=${topicsParam}&count=${count}`,
-        );
+        let url: string;
+        if (mistakesMode) {
+          // Scope missed questions to this class's topics.
+          const cls = CLASSES.find((c) => c.id === classId);
+          const classTopics = (cls?.topics.map((t) => t.id) ?? []).join(",");
+          url = `/api/questions/mistakes?topics=${classTopics}&count=50`;
+        } else {
+          url = `/api/questions/bulk?topics=${topicsParam}&count=${count}`;
+        }
+        const { data } = await axios.get(url);
         setQuestions(data);
       } catch (err) {
         console.error(err);
@@ -52,7 +61,7 @@ const SessionInner = () => {
       }
     };
     fetch();
-  }, [classId, topicsParam, count]);
+  }, [classId, topicsParam, count, mistakesMode]);
 
   const handleAnswer = async (choice: string) => {
     if (selected) return;
@@ -100,8 +109,12 @@ const SessionInner = () => {
         <div className="practice">
           <div className="container">
             <div className="coming-soon-box">
-              <h2>No questions found</h2>
-              <p>No questions available for the selected topics yet.</p>
+              <h2>{mistakesMode ? "No mistakes to review" : "No questions found"}</h2>
+              <p>
+                {mistakesMode
+                  ? "You haven't missed any questions in this class yet. Nice work!"
+                  : "No questions available for the selected topics yet."}
+              </p>
               <button
                 className="back-btn"
                 onClick={() => router.push(`/practice/${classId}`)}

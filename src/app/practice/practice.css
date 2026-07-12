@@ -576,6 +576,67 @@
   }
 }
 
+.mistakes-cta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  text-align: left;
+  padding: 1rem 1.2rem;
+  margin-bottom: 1rem;
+  border-radius: 16px;
+  border: 1.5px solid var(--border);
+  background: var(--secondary);
+  cursor: pointer;
+  font-family: var(--body);
+  transition:
+    transform 0.2s,
+    background 0.2s,
+    border-color 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    background: var(--input);
+    border-color: var(--warning);
+  }
+
+  .mistakes-cta-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    flex-shrink: 0;
+    background: rgba(249, 115, 22, 0.12);
+    color: var(--warning);
+    font-size: 1.1rem;
+  }
+
+  .mistakes-cta-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    strong {
+      font-size: 15px;
+      color: var(--text);
+    }
+
+    span {
+      font-size: 13px;
+      color: var(--muted);
+    }
+  }
+
+  .mistakes-cta-arrow {
+    color: var(--muted);
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+}
+
 .topic-select-actions {
   display: flex;
   align-items: center;

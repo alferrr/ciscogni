@@ -2,6 +2,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAuthPayload } from "@/lib/auth";
 import { syncDB } from "@/lib/sync";
 import Session from "@/models/Session";
+import { MAX_COMPETITIVE_XP } from "@/lib/xp";
+
+const VALID_MODES = ["practice", "midterms", "finals"];
+const MAX_QUESTIONS = 100;
+
+const clamp = (value: unknown, min: number, max: number) => {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return min;
+  return Math.max(min, Math.min(Math.floor(n), max));
+};
 
 export async function POST(req: NextRequest) {
   await syncDB();
@@ -12,12 +22,24 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     const { mode, score, total, xpEarned } = await req.json();
 
+    if (!VALID_MODES.includes(mode))
+      return NextResponse.json({ message: "Invalid mode" }, { status: 400 });
+
+    // Clamp to sane bounds so a forged request can't record impossible values.
+    // Per-attempt XP is already validated server-side; this session row is a
+    // history/display record. Note: score === total (the perfect-exam
+    // achievement) is not yet cross-checked against actual attempts — that
+    // needs a session/attempt link and is tracked separately.
+    const safeTotal = clamp(total, 0, MAX_QUESTIONS);
+    const safeScore = clamp(score, 0, safeTotal);
+    const safeXp = clamp(xpEarned, 0, safeScore * MAX_COMPETITIVE_XP);
+
     const session = await Session.create({
       userId: decoded.id,
       mode,
-      score,
-      total,
-      xpEarned,
+      score: safeScore,
+      total: safeTotal,
+      xpEarned: safeXp,
     });
 
     return NextResponse.json(session);

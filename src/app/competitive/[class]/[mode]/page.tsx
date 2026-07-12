@@ -72,18 +72,14 @@ const CompetitiveModePage = () => {
     if (timerRef.current) clearInterval(timerRef.current);
     setSelected(choice);
 
-    const xp = getXP(
-      timeLeftRef.current,
-      choice === questions[current].correctAnswer,
-    );
-
     try {
       const { data } = await axios.post("/api/attempts", {
         questionId: questions[current].id,
         selectedAnswer: choice,
-        xpEarned: xp,
+        timeLeft: timeLeftRef.current,
       });
 
+      const xp = data.xpGained ?? 0;
       if (data.isCorrect) setScore((s) => s + 1);
       setTotalXP((x) => x + xp);
       setResults((r) => [

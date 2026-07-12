@@ -1,7 +1,13 @@
 "use client";
 import Header from "@/components/Header/Header";
 import { CLASSES, iconMap } from "@/config/classes";
-import { FaArrowRight, FaArrowLeft, FaCode, FaCheck } from "react-icons/fa6";
+import {
+  FaArrowRight,
+  FaArrowLeft,
+  FaCode,
+  FaCheck,
+  FaRotateLeft,
+} from "react-icons/fa6";
 import { useRouter, useParams } from "next/navigation";
 import "../practice.css";
 import { useState } from "react";
@@ -95,6 +101,22 @@ const PracticeClassPage = () => {
 
           {step === "topics" && (
             <>
+              <button
+                className="mistakes-cta"
+                onClick={() =>
+                  router.push(`/practice/${classId}/session?mistakes=1`)
+                }
+              >
+                <span className="mistakes-cta-icon">
+                  <FaRotateLeft />
+                </span>
+                <span className="mistakes-cta-text">
+                  <strong>Practice My Mistakes</strong>
+                  <span>Review the questions you&apos;ve gotten wrong.</span>
+                </span>
+                <FaArrowRight className="mistakes-cta-arrow" />
+              </button>
+
               <div className="topic-select-actions">
                 <button className="select-all-btn" onClick={selectAll}>
                   Select All
