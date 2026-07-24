@@ -14,6 +14,19 @@ const messages = [
   "Setting up the arena...",
 ];
 
+const SNIPPETS = [
+  "const x = 1;",
+  "if (x > 0) {",
+  "return true;",
+  "function solve() {",
+  "for (i = 0; i < n; i++)",
+];
+
+const TYPE_SPEED = 70;
+const DELETE_SPEED = 35;
+const PAUSE_AFTER_TYPE = 1200;
+const PAUSE_AFTER_DELETE = 300;
+
 interface LoaderProps {
   message?: string;
 }
@@ -21,6 +34,9 @@ interface LoaderProps {
 const Loader = ({ message }: LoaderProps) => {
   const [currentMessage, setCurrentMessage] = useState("Loading...");
   const [dots, setDots] = useState("");
+  const [snippetIndex, setSnippetIndex] = useState(0);
+  const [typedText, setTypedText] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     setCurrentMessage(
@@ -42,11 +58,42 @@ const Loader = ({ message }: LoaderProps) => {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    const snippet = SNIPPETS[snippetIndex];
+    let timeout: ReturnType<typeof setTimeout>;
+
+    if (!deleting) {
+      if (typedText.length < snippet.length) {
+        timeout = setTimeout(
+          () => setTypedText(snippet.slice(0, typedText.length + 1)),
+          TYPE_SPEED,
+        );
+      } else {
+        timeout = setTimeout(() => setDeleting(true), PAUSE_AFTER_TYPE);
+      }
+    } else {
+      if (typedText.length > 0) {
+        timeout = setTimeout(
+          () => setTypedText(snippet.slice(0, typedText.length - 1)),
+          DELETE_SPEED,
+        );
+      } else {
+        timeout = setTimeout(() => {
+          setDeleting(false);
+          setSnippetIndex((i) => (i + 1) % SNIPPETS.length);
+        }, PAUSE_AFTER_DELETE);
+      }
+    }
+
+    return () => clearTimeout(timeout);
+  }, [typedText, deleting, snippetIndex]);
+
   return (
     <div className="loader-wrapper">
       <div className="loader-card">
         <div className="loader-icon">
-          <span>{"{ }"}</span>
+          <span className="loader-typed">{typedText}</span>
+          <span className="loader-cursor">|</span>
         </div>
         <p className="loader-message">
           {currentMessage}
