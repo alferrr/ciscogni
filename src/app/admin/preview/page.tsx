@@ -14,6 +14,7 @@ import OnboardingSkeleton from "@/components/Skeleton/OnboardingSkeleton";
 import QuizSkeleton from "@/components/Skeleton/QuizSkeleton";
 import AdminDashboardSkeleton from "@/components/Skeleton/AdminDashboardSkeleton";
 import AdminTableSkeleton from "@/components/Skeleton/AdminTableSkeleton";
+import Loader from "@/components/Loader/Loader";
 
 import AppError from "@/app/error";
 import AdminError from "@/app/admin/error";
@@ -152,6 +153,7 @@ const RENDERERS: Record<string, () => React.ReactNode> = {
       </tbody>
     </table>
   ),
+  "loader-spinner": () => <Loader />,
   "err-app": () => <AppError error={previewError} reset={noop} />,
   "err-admin": () => <AdminError error={previewError} reset={noop} />,
   "nf-practice": () => <PracticeNotFound />,
