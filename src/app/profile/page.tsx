@@ -29,17 +29,11 @@ import { GiSwordman } from "react-icons/gi";
 import { useToast } from "@/context/ToastContext";
 import { useRouter } from "next/navigation";
 import ProfileSkeleton from "@/components/Skeleton/ProfileSkeleton";
+import { CLASSES } from "@/config/classes";
 
-const topicLabels: Record<string, string> = {
-  intro_programming: "Intro to Programming",
-  c_structure: "C Structure & Expressions",
-  functions: "Functions",
-  builtin_functions: "Built-in Functions",
-  control_structure_1: "Control Structure I",
-  control_structure_2: "Control Structure II",
-  testing_debugging: "Testing & Debugging",
-  arrays_pointers: "Arrays & Pointers",
-};
+const topicLabels: Record<string, string> = Object.fromEntries(
+  CLASSES.flatMap((c) => c.topics.map((t) => [t.id, t.label])),
+);
 
 const iconMap: Record<string, React.ReactNode> = {
   FaBullseye: <FaBullseye />,
@@ -359,7 +353,6 @@ const Profile = () => {
                       <FaTrophy className={`session-icon ${s.mode}`} />
                       <div>
                         <p className="session-label">
-                          Programming I —{" "}
                           {s.mode === "midterms"
                             ? "Midterms Exam"
                             : "Finals Exam"}

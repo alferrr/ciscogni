@@ -7,7 +7,6 @@ import {
   FaDumbbell,
   FaCalendarDay,
   FaTrophy,
-  FaChartLine,
 } from "react-icons/fa6";
 
 const links = [
@@ -15,7 +14,6 @@ const links = [
   { icon: <FaDumbbell />, label: "Practice", href: "/practice" },
   { icon: <FaCalendarDay />, label: "Daily Challenge", href: "/daily" },
   { icon: <FaTrophy />, label: "Leaderboard", href: "/leaderboard" },
-  { icon: <FaChartLine />, label: "Progress", href: "/progress" },
 ];
 
 const Sidebar = () => {

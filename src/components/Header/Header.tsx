@@ -66,7 +66,6 @@ const Header = () => {
         <a href="/practice">Practice</a>
         <a href="/daily">Daily</a>
         <a href="/leaderboard">Leaderboard</a>
-        <a href="/progress">Progress</a>
         <a href="/competitive">Competitive</a>
       </div>
 
@@ -123,9 +122,6 @@ const Header = () => {
           </a>
           <a href="/leaderboard" onClick={toggleMenu}>
             Leaderboard
-          </a>
-          <a href="/progress" onClick={toggleMenu}>
-            Progress
           </a>
           <a href="/competitive" onClick={toggleMenu}>
             Competitive
