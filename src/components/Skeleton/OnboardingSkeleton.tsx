@@ -13,6 +13,10 @@ const OnboardingSkeleton = () => {
           <Skeleton width="120px" height="12px" />
           <Skeleton height="42px" borderRadius="10px" />
         </div>
+        <div className="os-field">
+          <Skeleton width="120px" height="12px" />
+          <Skeleton height="42px" borderRadius="10px" />
+        </div>
         <Skeleton width="100%" height="46px" borderRadius="12px" />
       </div>
     </div>

@@ -4,6 +4,7 @@ import axios from "axios";
 import { FaTrash, FaPen, FaXmark } from "react-icons/fa6";
 import { useToast } from "@/context/ToastContext";
 import AdminTableSkeleton from "@/components/Skeleton/AdminTableSkeleton";
+import { COURSES } from "@/config/courses";
 
 const ROLES = ["student", "teacher", "admin"];
 
@@ -239,12 +240,19 @@ const AdminUsers = () => {
               <div className="form-row">
                 <div className="form-field">
                   <label>Course</label>
-                  <input
+                  <select
                     value={form.course}
                     onChange={(e) =>
                       setForm({ ...form, course: e.target.value })
                     }
-                  />
+                  >
+                    <option value="">Select course</option>
+                    {COURSES.map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className="form-field">
                   <label>Year</label>

@@ -6,6 +6,7 @@ import { FaCode, FaFire, FaTrophy, FaBolt } from "react-icons/fa6";
 import { useToast } from "@/context/ToastContext";
 import "./onboarding.css";
 import OnboardingSkeleton from "@/components/Skeleton/OnboardingSkeleton";
+import { COURSES } from "@/config/courses";
 
 const highlights = [
   {
@@ -35,6 +36,7 @@ const Onboarding = () => {
   const { showToast } = useToast();
   const [step, setStep] = useState<"year" | "welcome">("year");
   const [user, setUser] = useState<any>(null);
+  const [course, setCourse] = useState("");
   const [year, setYear] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -44,6 +46,7 @@ const Onboarding = () => {
       try {
         const { data } = await axios.get("/api/user/me");
         setUser(data);
+        setCourse(data.course ?? "");
       } catch {
         router.push("/");
       } finally {
@@ -60,7 +63,7 @@ const Onboarding = () => {
     try {
       await axios.put("/api/user/update", {
         name: user.name,
-        course: user.course,
+        course,
         year,
       });
       setStep("welcome");
@@ -87,6 +90,22 @@ const Onboarding = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="onboarding-form">
+              <div className="field">
+                <label>What course are you taking?</label>
+                <select
+                  value={course}
+                  onChange={(e) => setCourse(e.target.value)}
+                  required
+                >
+                  <option value="">Select course</option>
+                  {COURSES.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               <div className="field">
                 <label>What year are you in?</label>
                 <select

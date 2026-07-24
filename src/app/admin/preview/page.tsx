@@ -4,6 +4,7 @@ import axios from "axios";
 import { FaTrash, FaPlus } from "react-icons/fa6";
 import { useToast } from "@/context/ToastContext";
 import { PREVIEW_PAGES } from "@/config/previewPages";
+import { COURSES } from "@/config/courses";
 import "../../onboarding/onboarding.css";
 
 import DashboardSkeleton from "@/components/Skeleton/DashboardSkeleton";
@@ -37,6 +38,17 @@ const OnboardingYearPreview = () => (
         <p>Let&apos;s get your profile set up before you start.</p>
       </div>
       <form className="onboarding-form" onSubmit={(e) => e.preventDefault()}>
+        <div className="field">
+          <label>What course are you taking?</label>
+          <select defaultValue="">
+            <option value="">Select course</option>
+            {COURSES.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
+        </div>
         <div className="field">
           <label>What year are you in?</label>
           <select defaultValue="">

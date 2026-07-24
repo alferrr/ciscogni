@@ -7,6 +7,7 @@ import ThemeToggle from "@/components/ThemeToggle/ThemeToggle";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/context/ToastContext";
 import axios from "axios";
+import { COURSES } from "@/config/courses";
 
 const Register = () => {
   const router = useRouter();
@@ -62,13 +63,18 @@ const Register = () => {
 
           <div className="input">
             <p>Course</p>
-            <input
-              type="text"
-              placeholder="BSIT"
+            <select
               value={course}
               onChange={(e) => setCourse(e.target.value)}
               required
-            />
+            >
+              <option value="">Select course</option>
+              {COURSES.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="input">

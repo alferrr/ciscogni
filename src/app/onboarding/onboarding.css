@@ -32,6 +32,12 @@
     }
   }
 
+  .onboarding-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
   .field {
     display: flex;
     flex-direction: column;
@@ -43,6 +49,7 @@
       color: var(--muted);
     }
 
+    input,
     select {
       padding: 10px 12px;
       background: var(--bg);

@@ -29,6 +29,7 @@ import { GiSwordman } from "react-icons/gi";
 import { useToast } from "@/context/ToastContext";
 import { useRouter } from "next/navigation";
 import ProfileSkeleton from "@/components/Skeleton/ProfileSkeleton";
+import { COURSES } from "@/config/courses";
 import { CLASSES } from "@/config/classes";
 
 const topicLabels: Record<string, string> = Object.fromEntries(
@@ -435,13 +436,18 @@ const Profile = () => {
                 <div className="field-row">
                   <div className="field">
                     <label>Course</label>
-                    <input
-                      type="text"
+                    <select
                       value={course}
                       onChange={(e) => setCourse(e.target.value)}
-                      placeholder="BSIT"
                       required
-                    />
+                    >
+                      <option value="">Select course</option>
+                      {COURSES.map((c) => (
+                        <option key={c} value={c}>
+                          {c}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div className="field">
                     <label>Year</label>
