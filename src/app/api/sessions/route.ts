@@ -2,16 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAuthPayload } from "@/lib/auth";
 import { syncDB } from "@/lib/sync";
 import Session from "@/models/Session";
-import { MAX_COMPETITIVE_XP } from "@/lib/xp";
+import { MAX_COMPETITIVE_XP, clamp } from "@/lib/xp";
 
 const VALID_MODES = ["practice", "midterms", "finals"];
 const MAX_QUESTIONS = 100;
-
-const clamp = (value: unknown, min: number, max: number) => {
-  const n = Number(value);
-  if (!Number.isFinite(n)) return min;
-  return Math.max(min, Math.min(Math.floor(n), max));
-};
 
 export async function POST(req: NextRequest) {
   await syncDB();

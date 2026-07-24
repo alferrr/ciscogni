@@ -9,6 +9,7 @@ import {
   FaRotateLeft,
 } from "react-icons/fa6";
 import { useRouter, useParams } from "next/navigation";
+import { notFound } from "next/navigation";
 import "../practice.css";
 import { useState } from "react";
 
@@ -26,17 +27,7 @@ const PracticeClassPage = () => {
 
   const cls = CLASSES.find((c) => c.id === classId);
 
-  if (!cls)
-    return (
-      <>
-        <Header />
-        <div className="practice">
-          <div className="container">
-            <p className="no-data">Class not found.</p>
-          </div>
-        </div>
-      </>
-    );
+  if (!cls) notFound();
 
   if (!cls.available)
     return (

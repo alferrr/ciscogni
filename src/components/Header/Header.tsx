@@ -66,7 +66,7 @@ const Header = () => {
         <a href="/practice">Practice</a>
         <a href="/daily">Daily</a>
         <a href="/leaderboard">Leaderboard</a>
-        {/* <a href="/progress">Progress</a> */}
+        <a href="/progress">Progress</a>
         <a href="/competitive">Competitive</a>
       </div>
 

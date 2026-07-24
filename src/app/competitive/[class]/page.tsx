@@ -9,6 +9,7 @@ import {
   FaBolt,
 } from "react-icons/fa6";
 import { useRouter, useParams } from "next/navigation";
+import { notFound } from "next/navigation";
 import "../competitive.css";
 
 const CompetitiveClassPage = () => {
@@ -20,13 +21,15 @@ const CompetitiveClassPage = () => {
 
   if (!classId) return null;
 
-  if (!cls || !cls.available)
+  if (!cls) notFound();
+
+  if (!cls.available)
     return (
       <>
         <Header />
         <div className="competitive">
           <div className="container">
-            <p className="loading">Class not found.</p>
+            <p className="loading">{cls.label} is coming soon.</p>
           </div>
         </div>
       </>

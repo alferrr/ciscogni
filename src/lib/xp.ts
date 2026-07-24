@@ -14,3 +14,12 @@ export function competitiveXP(timeLeft: number, isCorrect: boolean): number {
   if (t >= 5) return 20;
   return 10;
 }
+
+// Clamps an arbitrary value into [min, max], flooring it and treating
+// non-finite input as `min`. Used to bound client-submitted numbers
+// (e.g. session totals) so a forged request can't record impossible values.
+export function clamp(value: unknown, min: number, max: number): number {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return min;
+  return Math.max(min, Math.min(Math.floor(n), max));
+}
