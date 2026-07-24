@@ -6,6 +6,7 @@ import "../models/Session";
 import "../models/associations";
 import "../models/AllowedStudent";
 import "../models/PageView";
+import "../models/AdminTask";
 
 let synced = false;
 

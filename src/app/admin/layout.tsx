@@ -10,6 +10,8 @@ import {
   FaBook,
   FaRightFromBracket,
   FaGauge,
+  FaListCheck,
+  FaEye,
 } from "react-icons/fa6";
 
 const NAV_ITEMS = [
@@ -17,6 +19,8 @@ const NAV_ITEMS = [
   { href: "/admin/users", label: "Users", icon: <FaUsers /> },
   { href: "/admin/questions", label: "Questions", icon: <FaCircleQuestion /> },
   { href: "/admin/classes", label: "Classes", icon: <FaBook /> },
+  { href: "/admin/checklist", label: "Checklist", icon: <FaListCheck /> },
+  { href: "/admin/preview", label: "UI Preview", icon: <FaEye /> },
 ];
 
 export default function AdminLayout({
