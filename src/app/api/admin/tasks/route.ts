@@ -8,7 +8,11 @@ export async function GET(req: NextRequest) {
   if (!(await isAdminRequest(req)))
     return NextResponse.json({ message: "Forbidden" }, { status: 403 });
 
-  const tasks = await AdminTask.findAll({ order: [["createdAt", "DESC"]] });
+  const pageId = req.nextUrl.searchParams.get("pageId");
+  const tasks = await AdminTask.findAll({
+    where: pageId ? { pageId } : {},
+    order: [["createdAt", "DESC"]],
+  });
   return NextResponse.json(tasks);
 }
 
@@ -17,11 +21,14 @@ export async function POST(req: NextRequest) {
   if (!(await isAdminRequest(req)))
     return NextResponse.json({ message: "Forbidden" }, { status: 403 });
 
-  const { text } = await req.json();
+  const { text, pageId } = await req.json();
   if (!text || !String(text).trim())
     return NextResponse.json({ message: "Text is required" }, { status: 400 });
 
-  const task = await AdminTask.create({ text: String(text).trim() });
+  const task = await AdminTask.create({
+    text: String(text).trim(),
+    pageId: pageId ?? null,
+  });
   return NextResponse.json(task, { status: 201 });
 }
 

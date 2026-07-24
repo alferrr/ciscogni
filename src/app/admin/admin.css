@@ -830,6 +830,16 @@ html.dark .admin-shell {
   margin: 12px 0 4px;
 }
 
+.checklist-page-tag {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--input);
+  color: var(--muted);
+  white-space: nowrap;
+}
+
 /* ui preview */
 
 .preview-layout {
@@ -862,6 +872,10 @@ html.dark .admin-shell {
 }
 
 .preview-nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   text-align: left;
   padding: 8px 10px;
   border-radius: 8px;
@@ -880,7 +894,27 @@ html.dark .admin-shell {
   &.active {
     background: var(--blue);
     color: white;
+
+    .preview-nav-badge {
+      background: white;
+      color: var(--blue);
+    }
   }
+}
+
+.preview-nav-badge {
+  flex-shrink: 0;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #f97316;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .preview-frame {
@@ -889,6 +923,33 @@ html.dark .admin-shell {
   border-radius: 16px;
   min-height: 500px;
   overflow: auto;
+}
+
+.preview-notes {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--secondary);
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+}
+
+.preview-notes-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.preview-notes-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.preview-notes-empty {
+  font-size: 13px;
+  color: var(--muted);
 }
 
 .preview-frame-inner {

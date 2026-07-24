@@ -1,6 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { FaTrash, FaPlus } from "react-icons/fa6";
 import { useToast } from "@/context/ToastContext";
+import { PREVIEW_PAGES } from "@/config/previewPages";
 import "../../onboarding/onboarding.css";
 
 import DashboardSkeleton from "@/components/Skeleton/DashboardSkeleton";
@@ -15,6 +18,13 @@ import AppError from "@/app/error";
 import AdminError from "@/app/admin/error";
 import PracticeNotFound from "@/app/practice/[class]/not-found";
 import CompetitiveNotFound from "@/app/competitive/[class]/not-found";
+
+interface Task {
+  id: number;
+  text: string;
+  done: boolean;
+  pageId: string | null;
+}
 
 const noop = () => {};
 const previewError = new Error("Preview error");
@@ -113,69 +123,105 @@ const ToastPreview = () => {
   );
 };
 
-const CATEGORIES: {
-  name: string;
-  items: { id: string; label: string; render: () => React.ReactNode }[];
-}[] = [
-  {
-    name: "Onboarding",
-    items: [
-      { id: "onb-year", label: "Step 1: Year select", render: () => <OnboardingYearPreview /> },
-      { id: "onb-welcome", label: "Step 2: Welcome", render: () => <OnboardingWelcomePreview /> },
-    ],
-  },
-  {
-    name: "Loading Skeletons",
-    items: [
-      { id: "sk-dashboard", label: "Dashboard", render: () => <DashboardSkeleton /> },
-      { id: "sk-leaderboard", label: "Leaderboard", render: () => <LeaderboardSkeleton /> },
-      { id: "sk-profile", label: "Profile", render: () => <ProfileSkeleton /> },
-      { id: "sk-onboarding", label: "Onboarding", render: () => <OnboardingSkeleton /> },
-      { id: "sk-quiz-progress", label: "Quiz (progress bar)", render: () => <QuizSkeleton variant="progress" showHeader /> },
-      { id: "sk-quiz-timer", label: "Quiz (timer)", render: () => <QuizSkeleton variant="timer" /> },
-      { id: "sk-admin-dash", label: "Admin Dashboard", render: () => <AdminDashboardSkeleton /> },
-      {
-        id: "sk-admin-table",
-        label: "Admin Table",
-        render: () => (
-          <table className="admin-table">
-            <tbody>
-              <AdminTableSkeleton columns={6} />
-            </tbody>
-          </table>
-        ),
-      },
-    ],
-  },
-  {
-    name: "Errors & Not Found",
-    items: [
-      { id: "err-app", label: "App error page", render: () => <AppError error={previewError} reset={noop} /> },
-      { id: "err-admin", label: "Admin error page", render: () => <AdminError error={previewError} reset={noop} /> },
-      { id: "nf-practice", label: "Practice: class not found", render: () => <PracticeNotFound /> },
-      { id: "nf-competitive", label: "Competitive: class not found", render: () => <CompetitiveNotFound /> },
-    ],
-  },
-  {
-    name: "Empty States",
-    items: [
-      { id: "empty-questions", label: "No questions found", render: () => <EmptyStatePreview text="No questions found." /> },
-      { id: "empty-users", label: "No users found", render: () => <EmptyStatePreview text="No users found." /> },
-      { id: "empty-practice", label: "No progress data yet", render: () => <EmptyStatePreview text="No data yet. Start practicing!" /> },
-    ],
-  },
-  {
-    name: "Toasts",
-    items: [{ id: "toasts", label: "Toast variants", render: () => <ToastPreview /> }],
-  },
-];
+const RENDERERS: Record<string, () => React.ReactNode> = {
+  "onb-year": () => <OnboardingYearPreview />,
+  "onb-welcome": () => <OnboardingWelcomePreview />,
+  "sk-dashboard": () => <DashboardSkeleton />,
+  "sk-leaderboard": () => <LeaderboardSkeleton />,
+  "sk-profile": () => <ProfileSkeleton />,
+  "sk-onboarding": () => <OnboardingSkeleton />,
+  "sk-quiz-progress": () => <QuizSkeleton variant="progress" showHeader />,
+  "sk-quiz-timer": () => <QuizSkeleton variant="timer" />,
+  "sk-admin-dash": () => <AdminDashboardSkeleton />,
+  "sk-admin-table": () => (
+    <table className="admin-table">
+      <tbody>
+        <AdminTableSkeleton columns={6} />
+      </tbody>
+    </table>
+  ),
+  "err-app": () => <AppError error={previewError} reset={noop} />,
+  "err-admin": () => <AdminError error={previewError} reset={noop} />,
+  "nf-practice": () => <PracticeNotFound />,
+  "nf-competitive": () => <CompetitiveNotFound />,
+  "empty-questions": () => <EmptyStatePreview text="No questions found." />,
+  "empty-users": () => <EmptyStatePreview text="No users found." />,
+  "empty-practice": () => (
+    <EmptyStatePreview text="No data yet. Start practicing!" />
+  ),
+  toasts: () => <ToastPreview />,
+};
+
+const CATEGORIES = Object.values(
+  PREVIEW_PAGES.reduce(
+    (acc, p) => {
+      if (!acc[p.category]) acc[p.category] = { name: p.category, items: [] };
+      acc[p.category].items.push({ id: p.id, label: p.label });
+      return acc;
+    },
+    {} as Record<string, { name: string; items: { id: string; label: string }[] }>,
+  ),
+);
 
 const AdminPreview = () => {
-  const [selectedId, setSelectedId] = useState(CATEGORIES[0].items[0].id);
+  const { showToast } = useToast();
+  const [selectedId, setSelectedId] = useState(PREVIEW_PAGES[0].id);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [noteText, setNoteText] = useState("");
 
-  const selected = CATEGORIES.flatMap((c) => c.items).find(
-    (i) => i.id === selectedId,
-  );
+  const fetchTasks = async () => {
+    try {
+      const { data } = await axios.get("/api/admin/tasks");
+      setTasks(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
+  const pendingCount = (pageId: string) =>
+    tasks.filter((t) => t.pageId === pageId && !t.done).length;
+
+  const notesForSelected = tasks.filter((t) => t.pageId === selectedId);
+
+  const handleAddNote = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!noteText.trim()) return;
+    try {
+      const { data } = await axios.post("/api/admin/tasks", {
+        text: noteText,
+        pageId: selectedId,
+      });
+      setTasks((prev) => [data, ...prev]);
+      setNoteText("");
+    } catch {
+      showToast("Failed to add note.", "error");
+    }
+  };
+
+  const toggleDone = async (task: Task) => {
+    setTasks((prev) =>
+      prev.map((t) => (t.id === task.id ? { ...t, done: !t.done } : t)),
+    );
+    try {
+      await axios.put("/api/admin/tasks", { id: task.id, done: !task.done });
+    } catch {
+      showToast("Failed to update note.", "error");
+      fetchTasks();
+    }
+  };
+
+  const handleDeleteNote = async (id: number) => {
+    try {
+      await axios.delete("/api/admin/tasks", { data: { id } });
+      setTasks((prev) => prev.filter((t) => t.id !== id));
+    } catch {
+      showToast("Failed to delete note.", "error");
+    }
+  };
 
   return (
     <div>
@@ -185,21 +231,73 @@ const AdminPreview = () => {
           {CATEGORIES.map((cat) => (
             <div key={cat.name} className="preview-category">
               <p className="preview-category-title">{cat.name}</p>
-              {cat.items.map((item) => (
-                <button
-                  key={item.id}
-                  className={`preview-nav-item ${selectedId === item.id ? "active" : ""}`}
-                  onClick={() => setSelectedId(item.id)}
-                >
-                  {item.label}
-                </button>
-              ))}
+              {cat.items.map((item) => {
+                const count = pendingCount(item.id);
+                return (
+                  <button
+                    key={item.id}
+                    className={`preview-nav-item ${selectedId === item.id ? "active" : ""}`}
+                    onClick={() => setSelectedId(item.id)}
+                  >
+                    <span>{item.label}</span>
+                    {count > 0 && (
+                      <span className="preview-nav-badge">{count}</span>
+                    )}
+                  </button>
+                );
+              })}
             </div>
           ))}
         </div>
 
         <div className="preview-frame">
-          <div className="preview-frame-inner">{selected?.render()}</div>
+          <div className="preview-notes">
+            <p className="preview-notes-title">Notes for this page</p>
+
+            <form className="preview-notes-form" onSubmit={handleAddNote}>
+              <input
+                className="admin-search"
+                style={{ margin: 0, flex: 1 }}
+                placeholder="Add a note about what needs to change..."
+                value={noteText}
+                onChange={(e) => setNoteText(e.target.value)}
+              />
+              <button className="admin-btn primary" type="submit">
+                <FaPlus /> Add
+              </button>
+            </form>
+
+            {notesForSelected.length === 0 ? (
+              <p className="preview-notes-empty">No notes for this page.</p>
+            ) : (
+              <div className="checklist-list">
+                {notesForSelected.map((t) => (
+                  <div key={t.id} className="checklist-item">
+                    <label className="checklist-label">
+                      <input
+                        type="checkbox"
+                        checked={t.done}
+                        onChange={() => toggleDone(t)}
+                      />
+                      <span className={t.done ? "checklist-text-done" : ""}>
+                        {t.text}
+                      </span>
+                    </label>
+                    <button
+                      className="admin-btn danger"
+                      onClick={() => handleDeleteNote(t.id)}
+                    >
+                      <FaTrash />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="preview-frame-inner">
+            {RENDERERS[selectedId]?.()}
+          </div>
         </div>
       </div>
     </div>

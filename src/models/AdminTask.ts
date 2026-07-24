@@ -19,6 +19,12 @@ AdminTask.init(
       allowNull: false,
       defaultValue: false,
     },
+    // References a PREVIEW_PAGES id (src/config/previewPages.ts). Null means
+    // a general note not tied to a specific preview page.
+    pageId: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   },
   {
     sequelize,

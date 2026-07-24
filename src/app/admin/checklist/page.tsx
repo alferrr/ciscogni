@@ -4,11 +4,13 @@ import axios from "axios";
 import { FaTrash, FaPlus } from "react-icons/fa6";
 import { useToast } from "@/context/ToastContext";
 import AdminTableSkeleton from "@/components/Skeleton/AdminTableSkeleton";
+import { previewPageLabel } from "@/config/previewPages";
 
 interface Task {
   id: number;
   text: string;
   done: boolean;
+  pageId: string | null;
 }
 
 const AdminChecklist = () => {
@@ -114,6 +116,9 @@ const AdminChecklist = () => {
                     checked={t.done}
                     onChange={() => toggleDone(t)}
                   />
+                  <span className="checklist-page-tag">
+                    {previewPageLabel(t.pageId)}
+                  </span>
                   <span>{t.text}</span>
                 </label>
                 <button
@@ -136,6 +141,9 @@ const AdminChecklist = () => {
                         checked={t.done}
                         onChange={() => toggleDone(t)}
                       />
+                      <span className="checklist-page-tag">
+                        {previewPageLabel(t.pageId)}
+                      </span>
                       <span className="checklist-text-done">{t.text}</span>
                     </label>
                     <button
