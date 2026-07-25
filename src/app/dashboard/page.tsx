@@ -89,9 +89,9 @@ const Dashboard = () => {
             <p>Ready to train your programming brain today?</p>
           </div>
 
-          <div className="top-row">
-            <div className="box streak-box">
-              <FaFire className={`fire ${streak > 0 ? "active" : ""}`} />
+          <section className="dash-section streak-section">
+            <FaFire className={`fire-ghost ${streak > 0 ? "active" : ""}`} />
+            <div className="streak-info">
               <p className="box-label">Current Streak</p>
               <span className={`count ${streak > 0 ? "active" : ""}`}>
                 <FaFire /> {streak} {streak === 1 ? "day" : "days"}
@@ -101,130 +101,145 @@ const Dashboard = () => {
                   ? "Keep it up! Don't break the chain."
                   : "Start your streak today!"}
               </p>
-              <a href="/daily" className="box-btn">
-                Start Daily Challenge <FaArrowRight />
+            </div>
+            <a href="/daily" className="box-btn">
+              Start Daily Challenge <FaArrowRight />
+            </a>
+          </section>
+
+          <section className="dash-section">
+            <div className="section-header">
+              <h2>Competitive Mode</h2>
+            </div>
+            <div className="comp-grid">
+              <a href="/competitive?mode=midterms" className="comp-card premid">
+                <div className="comp-card-top">
+                  <FaTrophy className="comp-icon" />
+                </div>
+                <p className="comp-title">Midterms Exam</p>
+                <p className="comp-desc">
+                  Intro to Programming, Expressions, Functions, Built-ins, Control
+                  Structure I
+                </p>
+                <div className="comp-footer">
+                  <span>15s per question</span>
+                  <FaArrowRight />
+                </div>
+              </a>
+
+              <a href="/competitive?mode=finals" className="comp-card finals">
+                <div className="comp-card-top">
+                  <FaTrophy className="comp-icon" />
+                </div>
+                <p className="comp-title">Finals Exam</p>
+                <p className="comp-desc">
+                  Everything in Midterms + Loops, Debugging, Arrays & Pointers
+                </p>
+                <div className="comp-footer">
+                  <span>15s per question</span>
+                  <FaArrowRight />
+                </div>
               </a>
             </div>
-          </div>
+          </section>
 
-          <div className="section-header">
-            <h2>Competitive Mode</h2>
-          </div>
-          <div className="comp-grid">
-            <a href="/competitive?mode=midterms" className="comp-card premid">
-              <div className="comp-card-top">
-                <FaTrophy className="comp-icon" />
-              </div>
-              <p className="comp-title">Midterms Exam</p>
-              <p className="comp-desc">
-                Intro to Programming, Expressions, Functions, Built-ins, Control
-                Structure I
-              </p>
-              <div className="comp-footer">
-                <span>15s per question</span>
-                <FaArrowRight />
-              </div>
-            </a>
-
-            <a href="/competitive?mode=finals" className="comp-card finals">
-              <div className="comp-card-top">
-                <FaTrophy className="comp-icon" />
-              </div>
-              <p className="comp-title">Finals Exam</p>
-              <p className="comp-desc">
-                Everything in Midterms + Loops, Debugging, Arrays & Pointers
-              </p>
-              <div className="comp-footer">
-                <span>15s per question</span>
-                <FaArrowRight />
-              </div>
-            </a>
-          </div>
-
-          <div className="section-header">
-            <h2>Your Stats</h2>
-          </div>
-          <div className="stats-row">
-            <div className="stat-card">
-              <p className="stat-value">{user?.xp ?? 0}</p>
-              <p className="stat-label">Total XP</p>
+          <section className="dash-section">
+            <div className="section-header">
+              <h2>Your Stats</h2>
             </div>
-            <div className="stat-card">
-              <p className="stat-value">#{user?.rank ?? "—"}</p>
-              <p className="stat-label">Rank</p>
+            <div className="stats-row">
+              <div className="stat-card">
+                <p className="stat-value">{user?.xp ?? 0}</p>
+                <p className="stat-label">Total XP</p>
+              </div>
+              <div className="stat-card">
+                <p className="stat-value">#{user?.rank ?? "—"}</p>
+                <p className="stat-label">Rank</p>
+              </div>
+              <div className="stat-card">
+                <p className="stat-value">{streak}</p>
+                <p className="stat-label">Day Streak</p>
+              </div>
             </div>
-            <div className="stat-card">
-              <p className="stat-value">{streak}</p>
-              <p className="stat-label">Day Streak</p>
+          </section>
+
+          <section className="dash-section">
+            <div className="section-header">
+              <h2>Practice by Class</h2>
+              <a href="/practice">
+                See all <FaArrowRight />
+              </a>
             </div>
-          </div>
+            <div className="lesson-container">
+              {CLASSES.map((c) => {
+                const visual = classVisuals[c.id] ?? {
+                  color: "#64748b",
+                  icon: <FaBook />,
+                };
+                return (
+                  <a
+                    href={c.available ? `/practice/${c.id}` : "#"}
+                    key={c.id}
+                    className="lesson-row"
+                    style={{
+                      opacity: c.available ? 1 : 0.6,
+                      cursor: c.available ? "pointer" : "not-allowed",
+                    }}
+                    onClick={(e) => {
+                      if (!c.available) e.preventDefault();
+                    }}
+                  >
+                    <span
+                      className="lesson-icon"
+                      style={{
+                        color: visual.color,
+                        background: `${visual.color}15`,
+                      }}
+                    >
+                      {visual.icon}
+                    </span>
+                    <span className="lesson-label">
+                      {c.label}
+                      {!c.available && " (Coming Soon)"}
+                    </span>
+                    <FaArrowRight className="lesson-arrow" />
+                  </a>
+                );
+              })}
+            </div>
+          </section>
 
-          <div className="section-header">
-            <h2>Practice by Class</h2>
-            <a href="/practice">
-              See all <FaArrowRight />
-            </a>
-          </div>
-          <div className="lesson-container">
-            {CLASSES.map((c) => {
-              const visual = classVisuals[c.id] ?? {
-                color: "#64748b",
-                icon: <FaBook />,
-              };
-              return (
-                <a
-                  href={c.available ? `/practice/${c.id}` : "#"}
-                  key={c.id}
-                  className="lesson-box"
-                  style={{
-                    background: visual.color,
-                    opacity: c.available ? 1 : 0.6,
-                    cursor: c.available ? "pointer" : "not-allowed",
-                  }}
-                  onClick={(e) => {
-                    if (!c.available) e.preventDefault();
-                  }}
-                >
-                  <span className="lesson-icon">{visual.icon}</span>
-                  <span className="lesson-label">
-                    {c.label}
-                    {!c.available && " (Coming Soon)"}
-                  </span>
-                  <FaArrowRight className="lesson-arrow" />
-                </a>
-              );
-            })}
-          </div>
-
-          <div className="section-header">
-            <h2>Jump Back In</h2>
-          </div>
-          <div className="activity-list">
-            {sessions.length === 0 && (
-              <p className="no-activity">
-                No activity yet. Try Competitive Mode!
-              </p>
-            )}
-            {sessions.map((s: any, i: number) => (
-              <div key={i} className="activity-item">
-                <div className="activity-info">
-                  <FaTrophy className="activity-icon" />
-                  <div>
-                    <p className="activity-label">
-                      Programming I —{" "}
-                      {s.mode === "midterms" ? "Midterms Exam" : "Finals Exam"}
-                    </p>
-                    <p className="activity-time">
-                      {s.score}/{s.total} correct &middot; +{s.xpEarned} XP
-                    </p>
+          <section className="dash-section">
+            <div className="section-header">
+              <h2>Jump Back In</h2>
+            </div>
+            <div className="activity-list">
+              {sessions.length === 0 && (
+                <p className="no-activity">
+                  No activity yet. Try Competitive Mode!
+                </p>
+              )}
+              {sessions.map((s: any, i: number) => (
+                <div key={i} className="activity-item">
+                  <div className="activity-info">
+                    <FaTrophy className="activity-icon" />
+                    <div>
+                      <p className="activity-label">
+                        Programming I —{" "}
+                        {s.mode === "midterms" ? "Midterms Exam" : "Finals Exam"}
+                      </p>
+                      <p className="activity-time">
+                        {s.score}/{s.total} correct &middot; +{s.xpEarned} XP
+                      </p>
+                    </div>
                   </div>
+                  <span className="activity-score">
+                    {Math.round((s.score / s.total) * 100)}%
+                  </span>
                 </div>
-                <span className="activity-score">
-                  {Math.round((s.score / s.total) * 100)}%
-                </span>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </section>
         </div>
       </div>
     </>

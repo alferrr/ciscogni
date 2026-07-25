@@ -8,10 +8,12 @@
     width: 860px;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
   }
 
   .greeting {
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+
     h1 {
       font-size: 1.8rem;
       font-weight: 600;
@@ -23,41 +25,44 @@
     }
   }
 
-  .top-row {
-    display: flex;
-    gap: 1rem;
-    align-items: stretch;
+  .dash-section {
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--border);
+
+    &:last-of-type {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
   }
 
-  .box {
-    background: var(--secondary);
-    padding: 1.5rem;
-    border-radius: 20px;
-    border: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 0.75rem;
-    height: 250px;
-  }
-
-  .streak-box {
-    flex: 1;
+  .streak-section {
     position: relative;
-    min-height: 200px;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
 
-    .fire {
+    .fire-ghost {
       position: absolute;
-      bottom: -2rem;
-      right: -2rem;
-      font-size: 15rem;
-      opacity: 0.3;
-      color: var(--muted);
+      top: 50%;
+      right: -0.5rem;
+      transform: translateY(-50%);
+      font-size: 7rem;
+      opacity: 0.06;
+      color: var(--text);
+      pointer-events: none;
 
       &.active {
         color: #f97316;
+        opacity: 0.12;
       }
+    }
+
+    .streak-info {
+      position: relative;
+      z-index: 1;
     }
 
     .box-label {
@@ -69,13 +74,14 @@
     }
 
     .count {
-      font-size: 2.8rem;
+      font-size: 2.2rem;
       font-weight: 700;
       color: var(--muted);
       display: flex;
       align-items: center;
       gap: 8px;
       font-family: var(--headings);
+      margin-top: 4px;
 
       &.active {
         color: #f97316;
@@ -85,9 +91,12 @@
     .box-sub {
       font-size: 13px;
       color: var(--muted);
+      margin-top: 4px;
     }
 
     .box-btn {
+      position: relative;
+      z-index: 1;
       display: inline-flex;
       align-items: center;
       gap: 8px;
@@ -100,7 +109,7 @@
       font-size: 14px;
       text-decoration: none;
       transition: opacity 0.2s;
-      width: fit-content;
+      flex-shrink: 0;
 
       &:hover {
         opacity: 0.85;
@@ -108,56 +117,11 @@
     }
   }
 
-  .stats-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-  }
-
-  .stat-card {
-    background: var(--secondary);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 1.2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    min-width: 120px;
-
-    .stat-icon {
-      font-size: 20px;
-      margin-bottom: 4px;
-
-      &.yellow {
-        color: #eab308;
-      }
-      &.green {
-        color: #22c55e;
-      }
-      &.blue {
-        color: #1752f0;
-      }
-      &.orange {
-        color: #f97316;
-      }
-    }
-
-    .stat-value {
-      font-size: 1.4rem;
-      font-weight: 700;
-      font-family: var(--headings);
-    }
-
-    .stat-label {
-      font-size: 12px;
-      color: var(--muted);
-    }
-  }
-
   .section-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    margin-bottom: 1.1rem;
 
     h2 {
       font-size: 1.1rem;
@@ -178,67 +142,166 @@
     }
   }
 
-  .lesson-container {
+  .comp-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
+    grid-template-columns: 1fr 1fr;
   }
 
-  .lesson-box {
-    border-radius: 16px;
-    padding: 1.2rem;
+  .comp-card {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 10px;
+    padding: 0 1.5rem;
     text-decoration: none;
-    color: white;
-    transition:
-      transform 0.2s,
-      opacity 0.2s;
-    min-height: 130px;
-    justify-content: space-between;
+    color: var(--text);
+    transition: opacity 0.2s;
+
+    &:first-child {
+      padding-left: 0;
+    }
+    &:last-child {
+      padding-right: 0;
+      border-left: 1px solid var(--border);
+    }
 
     &:hover {
-      transform: translateY(-2px);
-      opacity: 0.92;
+      opacity: 0.7;
+    }
+
+    &.premid .comp-icon {
+      color: #1752f0;
+    }
+    &.finals .comp-icon {
+      color: #7c3aed;
+    }
+
+    .comp-card-top {
+      display: flex;
+      align-items: center;
+
+      .comp-icon {
+        font-size: 1.4rem;
+      }
+    }
+
+    .comp-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      font-family: var(--headings);
+    }
+
+    .comp-desc {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .comp-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: auto;
+      padding-top: 4px;
+    }
+  }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .stat-card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 0 1.2rem;
+    border-left: 1px solid var(--border);
+
+    &:first-child {
+      padding-left: 0;
+      border-left: none;
+    }
+
+    .stat-value {
+      font-size: 1.6rem;
+      font-weight: 700;
+      font-family: var(--headings);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--muted);
+    }
+  }
+
+  .lesson-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .lesson-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border);
+    text-decoration: none;
+    color: var(--text);
+    transition: gap 0.15s;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      gap: 16px;
     }
 
     .lesson-icon {
-      font-size: 1.4rem;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
     }
 
     .lesson-label {
       font-family: var(--headings);
       font-weight: 600;
       font-size: 14px;
-      line-height: 1.3;
+      flex: 1;
     }
 
     .lesson-arrow {
       font-size: 12px;
-      opacity: 0.7;
+      color: var(--muted);
     }
   }
 
   .activity-list {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    margin-bottom: 3rem;
   }
 
   .activity-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem 1.2rem;
-    background: var(--secondary);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    transition: background 0.2s;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--border);
+    transition: opacity 0.2s;
+
+    &:last-child {
+      border-bottom: none;
+    }
 
     &:hover {
-      background: var(--input);
+      opacity: 0.7;
     }
 
     .activity-info {
@@ -267,113 +330,6 @@
       font-size: 13px;
       font-weight: 600;
       color: var(--blue);
-      background: var(--input);
-      padding: 4px 10px;
-      border-radius: 999px;
-    }
-  }
-
-  /* compe */
-  .comp-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-  }
-
-  .comp-card {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 1.5rem;
-    border-radius: 20px;
-    border: 1.5px solid var(--border);
-    background: var(--secondary);
-    text-decoration: none;
-    color: var(--text);
-    transition: transform 0.2s;
-
-    &:hover {
-      transform: translateY(-2px);
-    }
-
-    &.premid .comp-icon {
-      color: #1752f0;
-    }
-    &.finals .comp-icon {
-      color: #7c3aed;
-    }
-    &.premid .comp-badge {
-      background: rgba(23, 82, 240, 0.1);
-      color: #1752f0;
-    }
-    &.finals .comp-badge {
-      background: rgba(124, 58, 237, 0.1);
-      color: #7c3aed;
-    }
-
-    .comp-card-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      .comp-icon {
-        font-size: 1.4rem;
-      }
-
-      .comp-badge {
-        font-size: 12px;
-        font-weight: 700;
-        padding: 4px 10px;
-        border-radius: 999px;
-      }
-    }
-
-    .comp-title {
-      font-size: 1.1rem;
-      font-weight: 700;
-      font-family: var(--headings);
-    }
-
-    .comp-desc {
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.5;
-    }
-
-    .comp-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: auto;
-    }
-  }
-
-  .stats-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-  }
-
-  .stat-card {
-    background: var(--secondary);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 1.2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-
-    .stat-value {
-      font-size: 1.6rem;
-      font-weight: 700;
-      font-family: var(--headings);
-    }
-
-    .stat-label {
-      font-size: 12px;
-      color: var(--muted);
     }
   }
 
@@ -381,18 +337,7 @@
     color: var(--muted);
     font-size: 14px;
     text-align: center;
-    padding: 1rem;
-  }
-
-  .activity-score {
-    &.correct {
-      color: #22c55e;
-      font-weight: 700;
-    }
-    &.wrong {
-      color: #ef4444;
-      font-weight: 700;
-    }
+    padding: 1rem 0;
   }
 }
 
@@ -404,24 +349,20 @@
       width: 100%;
     }
 
-    .top-row {
-      flex-direction: column;
-    }
-
     .comp-grid {
       grid-template-columns: 1fr;
+      gap: 1rem;
     }
 
-    .stats-row {
-      grid-template-columns: repeat(3, 1fr);
+    .comp-card:last-child {
+      border-left: none;
+      border-top: 1px solid var(--border);
+      padding-top: 1rem;
     }
 
-    .lesson-container {
-      grid-template-columns: 1fr 1fr;
-    }
-
-    .streak-box {
-      min-height: auto;
+    .streak-section {
+      flex-direction: column;
+      align-items: flex-start;
     }
   }
 }

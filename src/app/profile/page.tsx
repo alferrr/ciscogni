@@ -251,52 +251,86 @@ const Profile = () => {
                 <h2>Your Progress</h2>
               </div>
 
-              <div className="stats-row">
-                <div className="stat-card">
-                  <FaStar className="stat-icon yellow" />
-                  <p className="stat-value">{user?.xp ?? 0}</p>
-                  <p className="stat-label">Total XP</p>
-                </div>
-                <div className="stat-card">
-                  <FaCircleCheck className="stat-icon green" />
-                  <p className="stat-value">
-                    {progressData?.totalAnswered ?? 0}
-                  </p>
-                  <p className="stat-label">Answered</p>
-                </div>
-                <div className="stat-card">
-                  <FaBrain className="stat-icon blue" />
-                  <p className="stat-value">{progressData?.accuracy ?? 0}%</p>
-                  <p className="stat-label">Accuracy</p>
-                </div>
-                <div className="stat-card">
-                  <FaTrophy className="stat-icon orange" />
-                  <p className="stat-value">
-                    {progressData?.sessions?.length ?? 0}
-                  </p>
-                  <p className="stat-label">Exams Taken</p>
+              <div className="profile-block">
+                <div className="stats-row">
+                  <div className="stat-card">
+                    <FaStar className="stat-icon yellow" />
+                    <p className="stat-value">{user?.xp ?? 0}</p>
+                    <p className="stat-label">Total XP</p>
+                  </div>
+                  <div className="stat-card">
+                    <FaCircleCheck className="stat-icon green" />
+                    <p className="stat-value">
+                      {progressData?.totalAnswered ?? 0}
+                    </p>
+                    <p className="stat-label">Answered</p>
+                  </div>
+                  <div className="stat-card">
+                    <FaBrain className="stat-icon blue" />
+                    <p className="stat-value">{progressData?.accuracy ?? 0}%</p>
+                    <p className="stat-label">Accuracy</p>
+                  </div>
+                  <div className="stat-card">
+                    <FaTrophy className="stat-icon orange" />
+                    <p className="stat-value">
+                      {progressData?.sessions?.length ?? 0}
+                    </p>
+                    <p className="stat-label">Exams Taken</p>
+                  </div>
                 </div>
               </div>
 
-              <h3 className="sub-title">Accuracy by Topic</h3>
-              <div className="topic-progress-list">
-                {progressData?.topicStats?.length === 0 && (
-                  <p className="no-data">No data yet. Start practicing!</p>
-                )}
-                {progressData?.topicStats?.map((t: any) => (
-                  <div key={t.topic} className="topic-progress-item">
-                    <div className="topic-progress-info">
-                      <p className="topic-progress-label">
-                        {topicLabels[t.topic] ?? t.topic}
-                      </p>
-                      <p className="topic-progress-meta">
+              <div className="profile-block">
+                <h3 className="sub-title">Accuracy by Topic</h3>
+                <div className="topic-progress-list">
+                  {progressData?.topicStats?.length === 0 && (
+                    <p className="no-data">No data yet. Start practicing!</p>
+                  )}
+                  {progressData?.topicStats?.map((t: any) => (
+                    <div key={t.topic} className="topic-progress-item">
+                      <div className="topic-progress-info">
+                        <p className="topic-progress-label">
+                          {topicLabels[t.topic] ?? t.topic}
+                        </p>
+                        <p className="topic-progress-meta">
+                          {t.correct}/{t.total} correct
+                        </p>
+                      </div>
+                      <div className="topic-progress-bar-wrap">
+                        <div className="topic-progress-bar">
+                          <div
+                            className="topic-progress-fill"
+                            style={{
+                              width: `${t.accuracy}%`,
+                              background:
+                                t.accuracy >= 80
+                                  ? "#22c55e"
+                                  : t.accuracy >= 50
+                                    ? "#f97316"
+                                    : "#ef4444",
+                            }}
+                          />
+                        </div>
+                        <span className="topic-progress-pct">{t.accuracy}%</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="profile-block">
+                <h3 className="sub-title">Accuracy by Question Type</h3>
+                <div className="type-grid">
+                  {progressData?.typeStats?.map((t: any) => (
+                    <div key={t.type} className="type-card">
+                      <p className="type-label">{typeLabels[t.type] ?? t.type}</p>
+                      <p className="type-value">{t.accuracy}%</p>
+                      <p className="type-meta">
                         {t.correct}/{t.total} correct
                       </p>
-                    </div>
-                    <div className="topic-progress-bar-wrap">
-                      <div className="topic-progress-bar">
+                      <div className="type-bar">
                         <div
-                          className="topic-progress-fill"
+                          className="type-fill"
                           style={{
                             width: `${t.accuracy}%`,
                             background:
@@ -308,97 +342,73 @@ const Profile = () => {
                           }}
                         />
                       </div>
-                      <span className="topic-progress-pct">{t.accuracy}%</span>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
 
-              <h3 className="sub-title">Accuracy by Question Type</h3>
-              <div className="type-grid">
-                {progressData?.typeStats?.map((t: any) => (
-                  <div key={t.type} className="type-card">
-                    <p className="type-label">{typeLabels[t.type] ?? t.type}</p>
-                    <p className="type-value">{t.accuracy}%</p>
-                    <p className="type-meta">
-                      {t.correct}/{t.total} correct
+              <div className="profile-block">
+                <h3 className="sub-title">Recent Exams</h3>
+                <div className="sessions-list">
+                  {progressData?.sessions?.length === 0 && (
+                    <p className="no-data">
+                      No exams taken yet. Try Competitive Mode!
                     </p>
-                    <div className="type-bar">
-                      <div
-                        className="type-fill"
+                  )}
+                  {progressData?.sessions?.map((s: any, i: number) => (
+                    <div key={i} className="session-item">
+                      <div className="session-info">
+                        <FaTrophy className={`session-icon ${s.mode}`} />
+                        <div>
+                          <p className="session-label">
+                            {s.mode === "midterms"
+                              ? "Midterms Exam"
+                              : "Finals Exam"}
+                          </p>
+                          <p className="session-meta">
+                            {s.score}/{s.total} correct &middot; +{s.xpEarned} XP
+                          </p>
+                        </div>
+                      </div>
+                      <span
+                        className="session-pct"
                         style={{
-                          width: `${t.accuracy}%`,
-                          background:
-                            t.accuracy >= 80
+                          color:
+                            Math.round((s.score / s.total) * 100) >= 80
                               ? "#22c55e"
-                              : t.accuracy >= 50
+                              : Math.round((s.score / s.total) * 100) >= 50
                                 ? "#f97316"
                                 : "#ef4444",
                         }}
-                      />
+                      >
+                        {Math.round((s.score / s.total) * 100)}%
+                      </span>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
 
-              <h3 className="sub-title">Recent Exams</h3>
-              <div className="sessions-list">
-                {progressData?.sessions?.length === 0 && (
-                  <p className="no-data">
-                    No exams taken yet. Try Competitive Mode!
-                  </p>
-                )}
-                {progressData?.sessions?.map((s: any, i: number) => (
-                  <div key={i} className="session-item">
-                    <div className="session-info">
-                      <FaTrophy className={`session-icon ${s.mode}`} />
-                      <div>
-                        <p className="session-label">
-                          {s.mode === "midterms"
-                            ? "Midterms Exam"
-                            : "Finals Exam"}
-                        </p>
-                        <p className="session-meta">
-                          {s.score}/{s.total} correct &middot; +{s.xpEarned} XP
-                        </p>
-                      </div>
-                    </div>
-                    <span
-                      className="session-pct"
-                      style={{
-                        color:
-                          Math.round((s.score / s.total) * 100) >= 80
-                            ? "#22c55e"
-                            : Math.round((s.score / s.total) * 100) >= 50
-                              ? "#f97316"
-                              : "#ef4444",
-                      }}
+              <div className="profile-block">
+                <h3 className="sub-title">Achievements</h3>
+                <div className="achievements-grid">
+                  {achievements.map((a) => (
+                    <div
+                      key={a.id}
+                      className={`achievement-card ${a.unlocked ? "unlocked" : "locked"}`}
                     >
-                      {Math.round((s.score / s.total) * 100)}%
-                    </span>
-                  </div>
-                ))}
-              </div>
-
-              <h3 className="sub-title">Achievements</h3>
-              <div className="achievements-grid">
-                {achievements.map((a) => (
-                  <div
-                    key={a.id}
-                    className={`achievement-card ${a.unlocked ? "unlocked" : "locked"}`}
-                  >
-                    <span className="achievement-icon">
-                      {iconMap[a.icon] ?? <FaStar />}
-                    </span>
-                    <p className="achievement-label">{a.label}</p>
-                    <p className="achievement-desc">{a.description}</p>
-                    {!a.unlocked && (
-                      <div className="achievement-lock">
-                        <FaLock />
-                      </div>
-                    )}
-                  </div>
-                ))}
+                      <span className="achievement-icon">
+                        {iconMap[a.icon] ?? <FaStar />}
+                      </span>
+                      <p className="achievement-label">{a.label}</p>
+                      <p className="achievement-desc">{a.description}</p>
+                      {!a.unlocked && (
+                        <div className="achievement-lock">
+                          <FaLock />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           )}

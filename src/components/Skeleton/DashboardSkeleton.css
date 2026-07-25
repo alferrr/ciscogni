@@ -7,58 +7,61 @@
     width: 860px;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
   }
 
   .sk-greeting {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
   }
 
-  .sk-streak-box {
+  .sk-section {
     display: flex;
     flex-direction: column;
+    gap: 1.1rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--border);
+
+    &:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+  }
+
+  .sk-streak {
     gap: 12px;
-    padding: 1.5rem;
-    background: var(--secondary);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    min-height: 200px;
   }
 
   .sk-comp-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+    gap: 1.5rem;
   }
 
   .sk-stats-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
+    gap: 1.2rem;
   }
 
   .sk-lesson-container {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
 
   .sk-activity-list {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
   }
 
   .sk-activity-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem 1.2rem;
-    background: var(--secondary);
-    border: 1px solid var(--border);
-    border-radius: 14px;
 
     .sk-activity-left {
       display: flex;
@@ -84,9 +87,6 @@
     }
     .sk-stats-row {
       grid-template-columns: repeat(3, 1fr);
-    }
-    .sk-lesson-container {
-      grid-template-columns: 1fr 1fr;
     }
   }
 }
