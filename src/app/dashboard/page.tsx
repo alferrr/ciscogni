@@ -4,26 +4,23 @@ import { useEffect, useState, useCallback } from "react";
 import "./dashboard.css";
 import {
   FaFire,
-  FaBolt,
   FaBook,
   FaCode,
   FaBrain,
   FaArrowRight,
   FaTrophy,
 } from "react-icons/fa6";
-import { LuParentheses } from "react-icons/lu";
-import { MdDataArray } from "react-icons/md";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import DashboardSkeleton from "@/components/Skeleton/DashboardSkeleton";
 import { useRefetchOnShow } from "@/hooks/useRefetchOnShow";
+import { CLASSES } from "@/config/classes";
 
-const lessons = [
-  { label: "Loops & Iteration", color: "#1752f0", icon: <FaCode /> },
-  { label: "Conditionals", color: "#7c3aed", icon: <FaBrain /> },
-  { label: "Arrays", color: "#0891b2", icon: <MdDataArray /> },
-  { label: "Functions", color: "#059669", icon: <LuParentheses /> },
-];
+const classVisuals: Record<string, { color: string; icon: React.ReactNode }> = {
+  prog1: { color: "#1752f0", icon: <FaCode /> },
+  prog2: { color: "#7c3aed", icon: <FaBrain /> },
+  dsa: { color: "#64748b", icon: <FaBook /> },
+};
 
 const Dashboard = () => {
   const router = useRouter();
@@ -163,24 +160,40 @@ const Dashboard = () => {
           </div>
 
           <div className="section-header">
-            <h2>Practice by Topic</h2>
+            <h2>Practice by Class</h2>
             <a href="/practice">
               See all <FaArrowRight />
             </a>
           </div>
           <div className="lesson-container">
-            {lessons.map((l) => (
-              <a
-                href="/practice"
-                key={l.label}
-                className="lesson-box"
-                style={{ background: l.color }}
-              >
-                <span className="lesson-icon">{l.icon}</span>
-                <span className="lesson-label">{l.label}</span>
-                <FaArrowRight className="lesson-arrow" />
-              </a>
-            ))}
+            {CLASSES.map((c) => {
+              const visual = classVisuals[c.id] ?? {
+                color: "#64748b",
+                icon: <FaBook />,
+              };
+              return (
+                <a
+                  href={c.available ? `/practice/${c.id}` : "#"}
+                  key={c.id}
+                  className="lesson-box"
+                  style={{
+                    background: visual.color,
+                    opacity: c.available ? 1 : 0.6,
+                    cursor: c.available ? "pointer" : "not-allowed",
+                  }}
+                  onClick={(e) => {
+                    if (!c.available) e.preventDefault();
+                  }}
+                >
+                  <span className="lesson-icon">{visual.icon}</span>
+                  <span className="lesson-label">
+                    {c.label}
+                    {!c.available && " (Coming Soon)"}
+                  </span>
+                  <FaArrowRight className="lesson-arrow" />
+                </a>
+              );
+            })}
           </div>
 
           <div className="section-header">
