@@ -23,6 +23,7 @@ import {
   FaChartLine,
   FaRegUser,
   FaCircleCheck,
+  FaChevronDown,
 } from "react-icons/fa6";
 import { GiSwordman } from "react-icons/gi";
 
@@ -61,6 +62,9 @@ const typeLabels: Record<string, string> = {
   concept: "Concept",
 };
 
+const accuracyColor = (pct: number) =>
+  pct >= 80 ? "#22c55e" : pct >= 50 ? "#f97316" : "#ef4444";
+
 const Profile = () => {
   const router = useRouter();
   const { showToast } = useToast();
@@ -81,6 +85,7 @@ const Profile = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [achievements, setAchievements] = useState<any[]>([]);
   const [newlyUnlocked, setNewlyUnlocked] = useState<string[]>([]);
+  const [expandedClass, setExpandedClass] = useState<string | null>(null);
 
   const fetchAchievements = useCallback(async () => {
     try {
@@ -281,41 +286,115 @@ const Profile = () => {
               </div>
 
               <div className="profile-block">
-                <h3 className="sub-title">Accuracy by Topic</h3>
-                <div className="topic-progress-list">
-                  {progressData?.topicStats?.length === 0 && (
-                    <p className="no-data">No data yet. Start practicing!</p>
-                  )}
-                  {progressData?.topicStats?.map((t: any) => (
-                    <div key={t.topic} className="topic-progress-item">
-                      <div className="topic-progress-info">
-                        <p className="topic-progress-label">
-                          {topicLabels[t.topic] ?? t.topic}
-                        </p>
-                        <p className="topic-progress-meta">
-                          {t.correct}/{t.total} correct
-                        </p>
-                      </div>
-                      <div className="topic-progress-bar-wrap">
-                        <div className="topic-progress-bar">
-                          <div
-                            className="topic-progress-fill"
-                            style={{
-                              width: `${t.accuracy}%`,
-                              background:
-                                t.accuracy >= 80
-                                  ? "#22c55e"
-                                  : t.accuracy >= 50
-                                    ? "#f97316"
-                                    : "#ef4444",
-                            }}
-                          />
-                        </div>
-                        <span className="topic-progress-pct">{t.accuracy}%</span>
-                      </div>
+                <h3 className="sub-title">Accuracy by Class</h3>
+
+                {(progressData?.topicStats?.length ?? 0) === 0 ? (
+                  <p className="no-data">No data yet. Start practicing!</p>
+                ) : (
+                  <>
+                    <div className="overall-accuracy">
+                      <span className="overall-accuracy-label">
+                        Overall Accuracy
+                      </span>
+                      <span
+                        className="overall-accuracy-value"
+                        style={{ color: accuracyColor(progressData?.accuracy ?? 0) }}
+                      >
+                        {progressData?.accuracy ?? 0}%
+                      </span>
                     </div>
-                  ))}
-                </div>
+
+                    <div className="class-accuracy-list">
+                      {CLASSES.map((c) => {
+                        const topicIds = new Set(c.topics.map((t) => t.id));
+                        const stats = (progressData?.topicStats ?? []).filter(
+                          (t: any) => topicIds.has(t.topic),
+                        );
+                        if (stats.length === 0) return null;
+
+                        const correct = stats.reduce(
+                          (sum: number, t: any) => sum + t.correct,
+                          0,
+                        );
+                        const total = stats.reduce(
+                          (sum: number, t: any) => sum + t.total,
+                          0,
+                        );
+                        const classAccuracy = Math.round((correct / total) * 100);
+                        const expanded = expandedClass === c.id;
+
+                        return (
+                          <div key={c.id} className="class-accuracy-item">
+                            <button
+                              className="class-accuracy-header"
+                              onClick={() =>
+                                setExpandedClass(expanded ? null : c.id)
+                              }
+                            >
+                              <div className="topic-progress-info">
+                                <p className="topic-progress-label">{c.label}</p>
+                                <p className="topic-progress-meta">
+                                  {correct}/{total} correct
+                                </p>
+                              </div>
+                              <div className="topic-progress-bar-wrap">
+                                <div className="topic-progress-bar">
+                                  <div
+                                    className="topic-progress-fill"
+                                    style={{
+                                      width: `${classAccuracy}%`,
+                                      background: accuracyColor(classAccuracy),
+                                    }}
+                                  />
+                                </div>
+                                <span className="topic-progress-pct">
+                                  {classAccuracy}%
+                                </span>
+                                <FaChevronDown
+                                  className={`class-accuracy-chevron ${expanded ? "open" : ""}`}
+                                />
+                              </div>
+                            </button>
+
+                            {expanded && (
+                              <div className="topic-progress-list nested">
+                                {stats.map((t: any) => (
+                                  <div
+                                    key={t.topic}
+                                    className="topic-progress-item"
+                                  >
+                                    <div className="topic-progress-info">
+                                      <p className="topic-progress-label">
+                                        {topicLabels[t.topic] ?? t.topic}
+                                      </p>
+                                      <p className="topic-progress-meta">
+                                        {t.correct}/{t.total} correct
+                                      </p>
+                                    </div>
+                                    <div className="topic-progress-bar-wrap">
+                                      <div className="topic-progress-bar">
+                                        <div
+                                          className="topic-progress-fill"
+                                          style={{
+                                            width: `${t.accuracy}%`,
+                                            background: accuracyColor(t.accuracy),
+                                          }}
+                                        />
+                                      </div>
+                                      <span className="topic-progress-pct">
+                                        {t.accuracy}%
+                                      </span>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </>
+                )}
               </div>
 
               <div className="profile-block">
