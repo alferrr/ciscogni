@@ -200,6 +200,7 @@
     font-family: var(--body);
     font-size: 14px;
     text-align: left;
+    white-space: pre-wrap;
     cursor: pointer;
     transition:
       border-color 0.2s,
@@ -443,6 +444,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 8px;
+      white-space: pre-wrap;
 
       &.correct {
         background: rgba(34, 197, 94, 0.12);

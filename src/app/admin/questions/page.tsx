@@ -107,6 +107,13 @@ const AdminQuestions = () => {
       showToast("Correct answer must be one of the choices.", "error");
       return;
     }
+    if (new Set(form.choices).size !== form.choices.length) {
+      showToast(
+        "Two choices are identical (check for missing whitespace differences).",
+        "error",
+      );
+      return;
+    }
 
     try {
       if (editing) {
@@ -482,17 +489,27 @@ const AdminQuestions = () => {
               <div className="form-field">
                 <label>Choices *</label>
                 {form.choices.map((c, i) => (
-                  <input
-                    key={i}
-                    style={{ marginBottom: "6px" }}
-                    value={c}
-                    onChange={(e) => {
-                      const updated = [...form.choices];
-                      updated[i] = e.target.value;
-                      setForm({ ...form, choices: updated });
-                    }}
-                    placeholder={`Choice ${i + 1}`}
-                  />
+                  <div key={i} style={{ marginBottom: "6px" }}>
+                    <input
+                      style={{ fontFamily: "monospace", fontSize: "13px" }}
+                      value={c}
+                      onChange={(e) => {
+                        const updated = [...form.choices];
+                        updated[i] = e.target.value;
+                        setForm({ ...form, choices: updated });
+                      }}
+                      placeholder={`Choice ${i + 1}`}
+                    />
+                    <span
+                      style={{
+                        fontSize: "11px",
+                        color: "var(--text-secondary, #888)",
+                      }}
+                    >
+                      {c.length} char{c.length === 1 ? "" : "s"}
+                      {c !== c.trim() ? " · has leading/trailing space" : ""}
+                    </span>
+                  </div>
                 ))}
               </div>
 
