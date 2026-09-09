@@ -21,6 +21,9 @@
 # production
 /build
 
+# uploaded media (persists on-server, not committed)
+/public/uploads
+
 # misc
 .DS_Store
 *.pem

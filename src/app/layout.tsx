@@ -18,6 +18,10 @@ const inter = Inter({
 
 const SITE_URL = "https://ciscogni.dcism.org";
 const SITE_NAME = "Ciscogni";
+// Fallback copy for every route; the root page ("/") overrides title/
+// description/OG image with the admin-editable values from the DB
+// (see src/app/page.tsx) — kept out of this layout so that DB lookups
+// don't run on every single page in the app.
 const SITE_DESCRIPTION =
   "Ciscogni is a gamified practice platform for USC (University of San Carlos) students taking Programming 1 and Programming 2. Drill output prediction, bug detection, and logic tracing questions with XP, streaks, and a class leaderboard.";
 
@@ -36,10 +40,6 @@ export const metadata: Metadata = {
     "Programming 2",
     "C programming practice",
     "programming quiz",
-    "output prediction",
-    "bug detection",
-    "computer science exam review",
-    "midterms finals reviewer",
   ],
   authors: [{ name: "Ciscogni" }],
   applicationName: SITE_NAME,
@@ -68,14 +68,7 @@ export const metadata: Metadata = {
     title: "Ciscogni — Programming Practice for USC Students",
     description: SITE_DESCRIPTION,
     locale: "en_US",
-    images: [
-      {
-        url: "/opengraph-image",
-        width: 1200,
-        height: 630,
-        alt: "Ciscogni",
-      },
-    ],
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: SITE_NAME }],
   },
   twitter: {
     card: "summary_large_image",

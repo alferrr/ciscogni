@@ -7,6 +7,7 @@ import "../models/associations";
 import "../models/AllowedStudent";
 import "../models/PageView";
 import "../models/AdminTask";
+import "../models/SeoSetting";
 
 let synced = false;
 
