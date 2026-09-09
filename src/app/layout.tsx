@@ -16,9 +16,73 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
+const SITE_URL = "https://ciscogni.dcism.org";
+const SITE_NAME = "Ciscogni";
+const SITE_DESCRIPTION =
+  "Ciscogni is a gamified practice platform for USC (University of San Carlos) students taking Programming 1 and Programming 2. Drill output prediction, bug detection, and logic tracing questions with XP, streaks, and a class leaderboard.";
+
 export const metadata: Metadata = {
-  title: "Ciscogni",
-  description: "Duolingo for programming reasoning",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Ciscogni — Programming Practice for USC Students",
+    template: "%s | Ciscogni",
+  },
+  description: SITE_DESCRIPTION,
+  keywords: [
+    "Ciscogni",
+    "USC",
+    "University of San Carlos",
+    "Programming 1",
+    "Programming 2",
+    "C programming practice",
+    "programming quiz",
+    "output prediction",
+    "bug detection",
+    "computer science exam review",
+    "midterms finals reviewer",
+  ],
+  authors: [{ name: "Ciscogni" }],
+  applicationName: SITE_NAME,
+  category: "education",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+    },
+  },
+  alternates: {
+    canonical: "/",
+  },
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/assets/images/logo.png",
+  },
+  manifest: "/site.webmanifest",
+  openGraph: {
+    type: "website",
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    title: "Ciscogni — Programming Practice for USC Students",
+    description: SITE_DESCRIPTION,
+    locale: "en_US",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "Ciscogni",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Ciscogni — Programming Practice for USC Students",
+    description: SITE_DESCRIPTION,
+    images: ["/opengraph-image"],
+  },
 };
 
 export default function RootLayout({

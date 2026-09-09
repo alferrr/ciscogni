@@ -1,0 +1,16 @@
+{
+  "name": "Ciscogni",
+  "short_name": "Ciscogni",
+  "description": "Gamified programming practice for USC students.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0e14",
+  "theme_color": "#0b0e14",
+  "icons": [
+    {
+      "src": "/assets/images/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
