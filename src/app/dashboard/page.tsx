@@ -112,34 +112,43 @@ const Dashboard = () => {
               <h2>Competitive Mode</h2>
             </div>
             <div className="comp-grid">
-              <a href="/competitive?mode=midterms" className="comp-card premid">
-                <div className="comp-card-top">
-                  <FaTrophy className="comp-icon" />
-                </div>
-                <p className="comp-title">Midterms Exam</p>
-                <p className="comp-desc">
-                  Intro to Programming, Expressions, Functions, Built-ins, Control
-                  Structure I
-                </p>
-                <div className="comp-footer">
-                  <span>15s per question</span>
-                  <FaArrowRight />
-                </div>
-              </a>
+              {CLASSES.filter((c) => c.available).map((c) => {
+                const visual = classVisuals[c.id] ?? {
+                  color: "#64748b",
+                  icon: <FaTrophy />,
+                };
+                const unlocked = c.modes.filter((m) => !m.locked);
+                const locked = c.modes.filter((m) => m.locked);
+                const desc =
+                  unlocked.length > 0
+                    ? unlocked.map((m) => m.label).join(" · ") +
+                      (locked.length > 0
+                        ? ` (+${locked.length} coming soon)`
+                        : "")
+                    : "Coming soon.";
 
-              <a href="/competitive?mode=finals" className="comp-card finals">
-                <div className="comp-card-top">
-                  <FaTrophy className="comp-icon" />
-                </div>
-                <p className="comp-title">Finals Exam</p>
-                <p className="comp-desc">
-                  Everything in Midterms + Loops, Debugging, Arrays & Pointers
-                </p>
-                <div className="comp-footer">
-                  <span>15s per question</span>
-                  <FaArrowRight />
-                </div>
-              </a>
+                return (
+                  <a
+                    href={`/competitive/${c.id}`}
+                    key={c.id}
+                    className="comp-card"
+                    style={{ color: "inherit" }}
+                  >
+                    <div className="comp-card-top">
+                      <FaTrophy
+                        className="comp-icon"
+                        style={{ color: visual.color }}
+                      />
+                    </div>
+                    <p className="comp-title">{c.label}</p>
+                    <p className="comp-desc">{desc}</p>
+                    <div className="comp-footer">
+                      <span>15s per question</span>
+                      <FaArrowRight />
+                    </div>
+                  </a>
+                );
+              })}
             </div>
           </section>
 
