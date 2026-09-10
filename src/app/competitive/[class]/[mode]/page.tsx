@@ -43,7 +43,13 @@ const CompetitiveModePage = () => {
   const timeLeftRef = useRef(15);
 
   useEffect(() => {
-    if (!classId || !modeId) return;
+    if (mode?.locked) {
+      router.replace(`/competitive/${classId}`);
+    }
+  }, [mode, classId, router]);
+
+  useEffect(() => {
+    if (!classId || !modeId || mode?.locked) return;
     const fetch = async () => {
       try {
         const modeConfig = cls?.modes.find((m) => m.id === modeId);

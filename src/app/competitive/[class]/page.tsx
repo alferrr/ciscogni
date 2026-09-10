@@ -7,6 +7,7 @@ import {
   FaTrophy,
   FaClock,
   FaBolt,
+  FaLock,
 } from "react-icons/fa6";
 import { useRouter, useParams } from "next/navigation";
 import { notFound } from "next/navigation";
@@ -55,31 +56,54 @@ const CompetitiveClassPage = () => {
             </p>
           </div>
           <div className="mode-grid">
-            {cls.modes.map((m) => (
-              <button
-                key={m.id}
-                className="mode-card"
-                style={{ borderColor: m.color }}
-                onClick={() => router.push(`/competitive/${classId}/${m.id}`)}
-              >
-                <span className="mode-label" style={{ color: m.color }}>
-                  {m.label}
-                </span>
-                <p className="mode-desc">{m.description}</p>
-                <div className="mode-meta">
-                  <span>
-                    <FaClock /> 15s per question
+            {cls.modes.map((m) => {
+              const locked = m.locked;
+              return (
+                <button
+                  key={m.id}
+                  className="mode-card"
+                  style={{
+                    borderColor: locked ? "var(--border)" : m.color,
+                    opacity: locked ? 0.6 : 1,
+                    cursor: locked ? "not-allowed" : "pointer",
+                  }}
+                  disabled={locked}
+                  onClick={() =>
+                    !locked && router.push(`/competitive/${classId}/${m.id}`)
+                  }
+                >
+                  <span
+                    className="mode-label"
+                    style={{ color: locked ? "var(--muted)" : m.color }}
+                  >
+                    {m.label}
                   </span>
-                  <span>
-                    <FaBolt /> XP based on speed
-                  </span>
-                </div>
-                <FaArrowRight
-                  className="mode-arrow"
-                  style={{ color: m.color }}
-                />
-              </button>
-            ))}
+                  <p className="mode-desc">{m.description}</p>
+                  {locked ? (
+                    <div className="mode-meta">
+                      <span>
+                        <FaLock /> Locked
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="mode-meta">
+                      <span>
+                        <FaClock /> 15s per question
+                      </span>
+                      <span>
+                        <FaBolt /> XP based on speed
+                      </span>
+                    </div>
+                  )}
+                  {!locked && (
+                    <FaArrowRight
+                      className="mode-arrow"
+                      style={{ color: m.color }}
+                    />
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>

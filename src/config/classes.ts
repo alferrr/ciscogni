@@ -64,6 +64,7 @@ export const CLASSES = [
         description:
           "Intro to Programming, Expressions, Functions, Built-ins, Control Structure I",
         color: "#1752f0",
+        locked: false,
         topics: [
           "intro_programming",
           "c_structure",
@@ -78,6 +79,7 @@ export const CLASSES = [
         description:
           "Everything in Midterms + Loops, Debugging, Arrays & Pointers",
         color: "#7c3aed",
+        locked: false,
         topics: [
           "intro_programming",
           "c_structure",
@@ -158,6 +160,7 @@ export const CLASSES = [
         description:
           "Pointers, Dynamic Memory, Arrays, Sorting, Libraries, Structures",
         color: "#1752f0",
+        locked: false,
         topics: [
           "pointers_arrays",
           "dynamic_memory",
@@ -173,6 +176,7 @@ export const CLASSES = [
         description:
           "Everything in Midterms + ADT List, Linked List, File Operations",
         color: "#7c3aed",
+        locked: false,
         topics: [
           "pointers_arrays",
           "dynamic_memory",
@@ -190,9 +194,79 @@ export const CLASSES = [
   {
     id: "dsa",
     label: "Data Structures & Algorithms",
-    available: false,
-    topics: [],
-    modes: [],
+    available: true,
+    topics: [
+      {
+        id: "dsa_adt_list_ops",
+        label: "ADT List Operations",
+        color: "#1752f0",
+        icon: "FaListCheck",
+      },
+      {
+        id: "dsa_array_list_impl",
+        label: "Array Implementation of ADT List",
+        color: "#7c3aed",
+        icon: "FaCode",
+      },
+      {
+        id: "dsa_linked_list",
+        label: "Singly Linked List",
+        color: "#059669",
+        icon: "FaBolt",
+      },
+      {
+        id: "dsa_cursor_list",
+        label: "Cursor-Based Implementation",
+        color: "#0891b2",
+        icon: "FaBrain",
+      },
+      {
+        id: "dsa_adt_stack",
+        label: "ADT Stack",
+        color: "#dc2626",
+        icon: "FaBook",
+      },
+      {
+        id: "dsa_adt_queue",
+        label: "ADT Queue",
+        color: "#d97706",
+        icon: "FaBug",
+      },
+    ],
+    modes: [
+      {
+        id: "exam1",
+        label: "Exam 1",
+        description:
+          "ADT List, Array & Linked List Implementations, Cursor-Based Lists, ADT Stack, ADT Queue",
+        color: "#1752f0",
+        locked: false,
+        topics: [
+          "dsa_adt_list_ops",
+          "dsa_array_list_impl",
+          "dsa_linked_list",
+          "dsa_cursor_list",
+          "dsa_adt_stack",
+          "dsa_adt_queue",
+        ],
+      },
+      {
+        id: "exam2",
+        label: "Exam 2",
+        description: "Content coming soon.",
+        color: "#7c3aed",
+        locked: true,
+        topics: [],
+      },
+      {
+        id: "exam3",
+        label: "Exam 3",
+        description: "Content coming soon.",
+        color: "#db2777",
+        locked: true,
+        topics: [],
+      },
+    ],
   },
 ];
 
