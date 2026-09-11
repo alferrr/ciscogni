@@ -9,7 +9,7 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "seed": "TS_NODE_PROJECT=tsconfig.seed.json node --no-experimental-detect-module --env-file=.env.local --require ts-node/register --require tsconfig-paths/register src/lib/seed.ts",
+    "seed": "TS_NODE_PROJECT=tsconfig.seed.json node --no-experimental-detect-module --require ts-node/register --require tsconfig-paths/register src/lib/seed.ts",
     "seed:sql": "TS_NODE_PROJECT=tsconfig.seed.json node --no-experimental-detect-module --require ts-node/register --require tsconfig-paths/register scripts/generate-exam1-sql.ts"
   },
   "dependencies": {

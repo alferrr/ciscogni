@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config({ path: ".env.local" });
+
 import sequelize from "./db";
 import Question from "../models/Question";
 import "../models/Attempt";
