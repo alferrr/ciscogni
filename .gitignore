@@ -44,3 +44,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# generated seed sql (regenerate with npm run seed:sql)
+*_seed.sql

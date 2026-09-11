@@ -1077,7 +1077,11 @@ const seed = async () => {
   process.exit(0);
 };
 
-seed().catch((err) => {
-  console.error("Seed error:", err);
-  process.exit(1);
-});
+export { questions, SEED_TOPIC_IDS };
+
+if (require.main === module) {
+  seed().catch((err) => {
+    console.error("Seed error:", err);
+    process.exit(1);
+  });
+}
