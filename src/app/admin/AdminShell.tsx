@@ -13,6 +13,7 @@ import {
   FaListCheck,
   FaEye,
   FaMagnifyingGlass,
+  FaTerminal,
 } from "react-icons/fa6";
 
 const NAV_ITEMS = [
@@ -23,6 +24,7 @@ const NAV_ITEMS = [
   { href: "/admin/seo", label: "SEO", icon: <FaMagnifyingGlass /> },
   { href: "/admin/checklist", label: "Checklist", icon: <FaListCheck /> },
   { href: "/admin/preview", label: "UI Preview", icon: <FaEye /> },
+  { href: "/admin/build-logs", label: "Build Logs", icon: <FaTerminal /> },
 ];
 
 export default function AdminShell({
