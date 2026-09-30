@@ -33,6 +33,8 @@ export async function POST(req: NextRequest) {
     // extract last name for password
     const nameParts = name.split(" ");
     const lastName = nameParts[nameParts.length - 1]
+      .normalize("NFD")
+      .replace(/[̀-ͯ]/g, "")
       .toLowerCase()
       .replace(/[^a-z0-9]/g, "");
     const defaultPassword = `${lastName}${studentId}`;
