@@ -30,8 +30,8 @@ export async function GET(req: NextRequest) {
     ]);
 
   const rangeStart = new Date();
-  rangeStart.setDate(rangeStart.getDate() - 6);
-  rangeStart.setHours(0, 0, 0, 0);
+  rangeStart.setUTCHours(0, 0, 0, 0);
+  rangeStart.setUTCDate(rangeStart.getUTCDate() - 6);
 
   const trafficRows = (await PageView.findAll({
     attributes: [
@@ -52,7 +52,7 @@ export async function GET(req: NextRequest) {
 
   const traffic = Array.from({ length: 7 }, (_, i) => {
     const d = new Date(rangeStart);
-    d.setDate(rangeStart.getDate() + i);
+    d.setUTCDate(rangeStart.getUTCDate() + i);
     const key = d.toISOString().split("T")[0];
     const row = trafficRows.find(
       (r) => new Date(r.day).toISOString().split("T")[0] === key,
