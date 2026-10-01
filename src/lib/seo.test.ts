@@ -27,7 +27,7 @@ describe("getSeoSettings", () => {
       keywords: "a, b",
       ogImageUrl: "/img.png",
     });
-    vi.mocked(SeoSetting.findOrCreate).mockResolvedValue([row, false] as any);
+    vi.mocked(SeoSetting.findOrCreate).mockResolvedValue([row, false] as unknown as Awaited<ReturnType<typeof SeoSetting.findOrCreate>>);
 
     const settings = await getSeoSettings();
     expect(settings).toEqual({
@@ -59,7 +59,7 @@ describe("updateSeoSettings", () => {
       keywords: "old",
       ogImageUrl: null,
     });
-    vi.mocked(SeoSetting.findOrCreate).mockResolvedValue([row, false] as any);
+    vi.mocked(SeoSetting.findOrCreate).mockResolvedValue([row, false] as unknown as Awaited<ReturnType<typeof SeoSetting.findOrCreate>>);
 
     const result = await updateSeoSettings({ title: "New title" });
 
