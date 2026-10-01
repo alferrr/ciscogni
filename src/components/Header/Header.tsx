@@ -1,10 +1,18 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import "./Header.css";
-import { FaFire, FaRegUser, FaBars, FaXmark } from "react-icons/fa6";
+import {
+  FaFire,
+  FaRegUser,
+  FaBars,
+  FaXmark,
+  FaWandMagicSparkles,
+} from "react-icons/fa6";
 import ThemeToggle from "../ThemeToggle/ThemeToggle";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+
+const BSDS_ANNOUNCEMENT_KEY = "seen_update_bsds_course";
 
 const Header = () => {
   const router = useRouter();
@@ -14,6 +22,7 @@ const Header = () => {
   const [streak, setStreak] = useState<number | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [showBsdsAnnouncement, setShowBsdsAnnouncement] = useState(false);
 
   useEffect(() => {
     const user = localStorage.getItem("user");
@@ -24,7 +33,16 @@ const Header = () => {
     } else {
       setStreak(0);
     }
+
+    if (!localStorage.getItem(BSDS_ANNOUNCEMENT_KEY)) {
+      setShowBsdsAnnouncement(true);
+    }
   }, []);
+
+  const dismissBsdsAnnouncement = () => {
+    localStorage.setItem(BSDS_ANNOUNCEMENT_KEY, "1");
+    setShowBsdsAnnouncement(false);
+  };
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -81,8 +99,11 @@ const Header = () => {
 
         <div className="user-menu" ref={dropdownRef}>
           <button
-            className="user-icon-btn"
-            onClick={() => setDropdownOpen((p) => !p)}
+            className={`user-icon-btn ${showBsdsAnnouncement ? "highlight" : ""}`}
+            onClick={() => {
+              setDropdownOpen((p) => !p);
+              dismissBsdsAnnouncement();
+            }}
             aria-label="User menu"
           >
             <FaRegUser />
@@ -99,6 +120,26 @@ const Header = () => {
               {isAdmin && (
                 <button onMouseDown={() => router.push("/admin")}>Admin</button>
               )}
+            </div>
+          )}
+
+          {showBsdsAnnouncement && !dropdownOpen && (
+            <div className="feature-announcement">
+              <button
+                className="feature-announcement-close"
+                onClick={dismissBsdsAnnouncement}
+                aria-label="Dismiss announcement"
+              >
+                <FaXmark />
+              </button>
+              <div className="feature-announcement-badge">
+                <FaWandMagicSparkles />
+                What&apos;s New
+              </div>
+              <p>
+                <strong>BSDS</strong> is now available as a course! Head to
+                your <strong>Profile</strong> to update it.
+              </p>
             </div>
           )}
         </div>

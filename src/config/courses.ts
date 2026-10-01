@@ -1,1 +1,1 @@
-export const COURSES = ["BSIT", "BSCS", "BSIS"];
+export const COURSES = ["BSIT", "BSCS", "BSIS", "BSDS"];
