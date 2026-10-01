@@ -137,8 +137,9 @@ const Header = () => {
                 What&apos;s New
               </div>
               <p>
-                <strong>BSDS</strong> is now available as a course! Head to
-                your <strong>Profile</strong> to update it.
+                <strong style={{ fontWeight: 700, color: "gold" }}>BSDS</strong>{" "}
+                is now available as a course! Head to your{" "}
+                <strong>Profile</strong> to update it.
               </p>
             </div>
           )}
