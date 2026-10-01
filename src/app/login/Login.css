@@ -66,6 +66,7 @@
           outline: none;
           border: 2px solid transparent;
           border-radius: 12px;
+          transition: 0.3s ease;
 
           &.special-char {
             border-color: #e6b800;
@@ -74,14 +75,15 @@
 
         .special-char-popup {
           position: absolute;
-          top: 100%;
-          left: 0;
+          bottom: 70%;
+          left: 40%;
           margin-top: 6px;
           padding: 8px 12px;
-          background: #e6b800;
+          background: #e6b8009e;
           color: #1a1a1a;
+          color: white;
           font-size: 12px;
-          font-weight: 400;
+          font-weight: 600;
           border-radius: 8px;
           z-index: 10;
         }
@@ -112,6 +114,9 @@
         line-height: 1.5;
         color: var(--text);
         opacity: 0.8;
+        display: flex;
+        justify-content: center;
+        align-items: center;
 
         ul {
           margin: 0;
@@ -121,8 +126,9 @@
 
         li {
           display: flex;
-          align-items: flex-start;
+          align-items: center;
           gap: 6px;
+          font-weight: 600;
 
           &::before {
             content: "●";

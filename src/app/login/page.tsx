@@ -91,15 +91,15 @@ const Login = () => {
             )}
           </div>
 
+          <button type="submit" disabled={loading}>
+            {loading ? "Signing in..." : "Sign In"}
+          </button>
+
           <div className="password-hint">
             <ul>
               <li>Can&apos;t sign in? Contact a Cisco officer for help.</li>
             </ul>
           </div>
-
-          <button type="submit" disabled={loading}>
-            {loading ? "Signing in..." : "Sign In"}
-          </button>
         </form>
       </div>
     </div>
