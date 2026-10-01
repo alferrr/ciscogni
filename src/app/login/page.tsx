@@ -8,11 +8,13 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/context/ToastContext";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { FaEye, FaEyeSlash, FaCircleInfo } from "react-icons/fa6";
 
 const Login = () => {
   const router = useRouter();
   const [studentId, setStudentId] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [hasSpecialChar, setHasSpecialChar] = useState(false);
   const [loading, setLoading] = useState(false);
   const { showToast } = useToast();
@@ -72,20 +74,31 @@ const Login = () => {
 
           <div className="input">
             <p>Password</p>
-            <input
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => {
-                const value = e.target.value;
-                setPassword(value);
-                setHasSpecialChar(/[^a-zA-Z0-9]/.test(value));
-              }}
-              className={hasSpecialChar ? "special-char" : ""}
-              required
-            />
+            <div className="password-field">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setPassword(value);
+                  setHasSpecialChar(/[^a-zA-Z0-9]/.test(value));
+                }}
+                className={hasSpecialChar ? "special-char" : ""}
+                required
+              />
+              <button
+                type="button"
+                className="toggle-password"
+                onClick={() => setShowPassword((prev) => !prev)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
             {hasSpecialChar && (
               <div className="special-char-popup">
+                <FaCircleInfo />
                 Special letters are simplified (e.g. ñ → n).
               </div>
             )}
@@ -97,7 +110,10 @@ const Login = () => {
 
           <div className="password-hint">
             <ul>
-              <li>Can&apos;t sign in? Contact a Cisco officer for help.</li>
+              <li>
+                <FaCircleInfo />
+                Can&apos;t sign in? Contact a Cisco officer for help.
+              </li>
             </ul>
           </div>
         </form>

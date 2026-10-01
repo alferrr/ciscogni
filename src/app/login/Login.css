@@ -60,6 +60,7 @@
         gap: 8px;
 
         input {
+          width: 100%;
           padding: 12px;
           background: var(--input);
           color: var(--text);
@@ -67,9 +68,43 @@
           border: 2px solid transparent;
           border-radius: 12px;
           transition: 0.3s ease;
+          box-sizing: border-box;
 
           &.special-char {
             border-color: #e6b800;
+          }
+        }
+
+        .password-field {
+          position: relative;
+          width: 100%;
+
+          input {
+            padding-right: 56px;
+          }
+
+          .toggle-password {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: none;
+            padding: 6px;
+            margin: 0;
+            width: auto;
+            font-size: 16px;
+            color: var(--text);
+            opacity: 0.6;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+
+            &:hover {
+              opacity: 1;
+            }
           }
         }
 
@@ -77,15 +112,21 @@
           position: absolute;
           bottom: 70%;
           left: 40%;
+          display: flex;
+          align-items: center;
+          gap: 6px;
           margin-top: 6px;
           padding: 8px 12px;
           background: #e6b8009e;
-          color: #1a1a1a;
           color: white;
           font-size: 12px;
           font-weight: 600;
           border-radius: 8px;
           z-index: 10;
+
+          svg {
+            flex-shrink: 0;
+          }
         }
       }
 
@@ -130,11 +171,8 @@
           gap: 6px;
           font-weight: 600;
 
-          &::before {
-            content: "●";
+          svg {
             flex-shrink: 0;
-            font-size: 8px;
-            line-height: 1.8;
             color: var(--blue);
           }
         }
