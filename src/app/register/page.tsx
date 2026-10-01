@@ -92,10 +92,19 @@ const Register = () => {
             </select>
           </div>
 
-          <p className="password-hint">
-            Your default password is your{" "}
-            <strong>last name + student ID</strong> (e.g. mercado19020241)
-          </p>
+          <div className="password-hint">
+            <ul>
+              <li>
+                Your default password is your{" "}
+                <strong>last name + student ID</strong> (e.g. mercado19020241)
+              </li>
+              <li>
+                If your last name has a special character (e.g. ñ, é), use
+                its simplified letter instead (e.g. Peña → pena).
+              </li>
+              <li>Can&apos;t sign in? Contact a Cisco officer for help.</li>
+            </ul>
+          </div>
 
           <button type="submit" disabled={loading}>
             {loading ? "Creating account..." : "Create Account"}

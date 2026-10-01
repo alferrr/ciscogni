@@ -52,6 +52,7 @@
       }
 
       .input {
+        position: relative;
         width: 100%;
         display: flex;
         flex-direction: column;
@@ -63,8 +64,26 @@
           background: var(--input);
           color: var(--text);
           outline: none;
-          border: none;
+          border: 2px solid transparent;
           border-radius: 12px;
+
+          &.special-char {
+            border-color: #e6b800;
+          }
+        }
+
+        .special-char-popup {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          margin-top: 6px;
+          padding: 8px 12px;
+          background: #e6b800;
+          color: #1a1a1a;
+          font-size: 12px;
+          font-weight: 400;
+          border-radius: 8px;
+          z-index: 10;
         }
       }
 
@@ -79,6 +98,44 @@
         font-weight: bold;
         color: white;
         cursor: pointer;
+      }
+
+      .password-hint {
+        box-sizing: border-box;
+        width: 100%;
+        margin-top: 4px;
+        padding: 10px 12px;
+        background: var(--input);
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 300;
+        line-height: 1.5;
+        color: var(--text);
+        opacity: 0.8;
+
+        ul {
+          margin: 0;
+          padding: 0;
+          list-style: none;
+        }
+
+        li {
+          display: flex;
+          align-items: flex-start;
+          gap: 6px;
+
+          &::before {
+            content: "●";
+            flex-shrink: 0;
+            font-size: 8px;
+            line-height: 1.8;
+            color: var(--blue);
+          }
+        }
+
+        li + li {
+          margin-top: 4px;
+        }
       }
     }
 

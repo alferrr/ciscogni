@@ -13,6 +13,7 @@ const Login = () => {
   const router = useRouter();
   const [studentId, setStudentId] = useState("");
   const [password, setPassword] = useState("");
+  const [hasSpecialChar, setHasSpecialChar] = useState(false);
   const [loading, setLoading] = useState(false);
   const { showToast } = useToast();
 
@@ -75,16 +76,26 @@ const Login = () => {
               type="password"
               placeholder="••••••••"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                setPassword(value);
+                setHasSpecialChar(/[^a-zA-Z0-9]/.test(value));
+              }}
+              className={hasSpecialChar ? "special-char" : ""}
               required
             />
+            {hasSpecialChar && (
+              <div className="special-char-popup">
+                Special letters are simplified (e.g. ñ → n).
+              </div>
+            )}
           </div>
 
-          {/* <div className="password-hint">
-            Default password is your <strong>last name + student ID</strong>
-            <br />
-            Example: <strong>mercado19020241</strong>
-          </div> */}
+          <div className="password-hint">
+            <ul>
+              <li>Can&apos;t sign in? Contact a Cisco officer for help.</li>
+            </ul>
+          </div>
 
           <button type="submit" disabled={loading}>
             {loading ? "Signing in..." : "Sign In"}
