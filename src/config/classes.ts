@@ -232,6 +232,36 @@ export const CLASSES = [
         color: "#d97706",
         icon: "FaBug",
       },
+      {
+        id: "dsa_uid_bit_vector",
+        label: "UID Sets: Bit Vector Array",
+        color: "#1752f0",
+        icon: "FaListCheck",
+      },
+      {
+        id: "dsa_uid_computer_word",
+        label: "UID Sets: Computer Word",
+        color: "#7c3aed",
+        icon: "FaCode",
+      },
+      {
+        id: "dsa_dict_open_hashing",
+        label: "Dictionary: Open Hashing",
+        color: "#059669",
+        icon: "FaBolt",
+      },
+      {
+        id: "dsa_dict_closed_hashing",
+        label: "Dictionary: Closed Hashing",
+        color: "#0891b2",
+        icon: "FaBrain",
+      },
+      {
+        id: "dsa_priority_queue",
+        label: "Priority Queue (POT)",
+        color: "#dc2626",
+        icon: "FaBook",
+      },
     ],
     modes: [
       {
@@ -253,10 +283,17 @@ export const CLASSES = [
       {
         id: "exam2",
         label: "Exam 2",
-        description: "Content coming soon.",
+        description:
+          "ADT UID Sets (Bit Vector & Computer Word), Dictionary (Open & Closed Hashing), Priority Queue (POT)",
         color: "#7c3aed",
-        locked: true,
-        topics: [],
+        locked: false,
+        topics: [
+          "dsa_uid_bit_vector",
+          "dsa_uid_computer_word",
+          "dsa_dict_open_hashing",
+          "dsa_dict_closed_hashing",
+          "dsa_priority_queue",
+        ],
       },
       {
         id: "exam3",

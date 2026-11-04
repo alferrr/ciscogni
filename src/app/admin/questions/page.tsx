@@ -141,12 +141,21 @@ const AdminQuestions = () => {
     }
   };
 
+  const modeTopics = currentClass?.modes.find((m) => m.id === filterMode)
+    ?.topics as string[] | undefined;
+
   const filtered = questions.filter((q) => {
     const matchClass = topicsForClass.includes(q.topic);
     const matchSearch = q.questionText
       .toLowerCase()
       .includes(search.toLowerCase());
-    const matchMode = filterMode === "all" || q.mode === filterMode;
+    // A question's `mode` column is just "practice" for virtually every row —
+    // the real exam/midterms/finals grouping lives in each mode's `topics`
+    // list (same source the student-facing exam flows filter by), so match
+    // against that instead of the literal mode field.
+    const matchMode =
+      filterMode === "all" ||
+      (modeTopics ? modeTopics.includes(q.topic) : q.mode === filterMode);
     const matchTopic = filterTopic === "all" || q.topic === filterTopic;
     return matchClass && matchSearch && matchMode && matchTopic;
   });
