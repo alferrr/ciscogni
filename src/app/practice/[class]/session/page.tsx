@@ -34,11 +34,40 @@ const SessionInner = () => {
   const [done, setDone] = useState(false);
   const [score, setScore] = useState(0);
   const [results, setResults] = useState<any[]>([]);
+  const [restored, setRestored] = useState(false);
+
+  // Scoped to the exact session (class + topics/mistakes + count) so leaving
+  // mid-quiz (Back button, browser back, accidental refresh) and returning
+  // to the same session resumes progress instead of silently discarding it.
+  const storageKey = `practice_session:${classId}:${
+    mistakesMode ? "mistakes" : topicsParam
+  }:${count}`;
 
   useEffect(() => {
     if (!classId || (!topicsParam && !mistakesMode)) {
       setLoading(false);
       return;
+    }
+
+    const saved = sessionStorage.getItem(storageKey);
+    if (saved) {
+      try {
+        const snapshot = JSON.parse(saved);
+        if (Array.isArray(snapshot.questions) && snapshot.questions.length) {
+          setQuestions(snapshot.questions);
+          setCurrent(snapshot.current ?? 0);
+          setSelected(snapshot.selected ?? null);
+          setResult(snapshot.result ?? null);
+          setScore(snapshot.score ?? 0);
+          setResults(snapshot.results ?? []);
+          setDone(snapshot.done ?? false);
+          setLoading(false);
+          setRestored(true);
+          return;
+        }
+      } catch {
+        // Corrupt/unreadable snapshot — fall through and fetch fresh.
+      }
     }
 
     const fetch = async () => {
@@ -58,10 +87,21 @@ const SessionInner = () => {
         console.error(err);
       } finally {
         setLoading(false);
+        setRestored(true);
       }
     };
     fetch();
   }, [classId, topicsParam, count, mistakesMode]);
+
+  useEffect(() => {
+    if (!restored || questions.length === 0) return;
+    sessionStorage.setItem(
+      storageKey,
+      JSON.stringify({ questions, current, selected, result, score, results, done }),
+    );
+  }, [restored, questions, current, selected, result, score, results, done]);
+
+  const clearSavedSession = () => sessionStorage.removeItem(storageKey);
 
   const handleAnswer = async (choice: string) => {
     if (selected) return;
@@ -233,11 +273,18 @@ const SessionInner = () => {
                 <div className="results-actions">
                   <button
                     className="restart-btn"
-                    onClick={() => router.push(`/practice/${classId}`)}
+                    onClick={() => {
+                      clearSavedSession();
+                      router.push(`/practice/${classId}`);
+                    }}
                   >
                     Practice Again
                   </button>
-                  <a href="/dashboard" className="dashboard-btn">
+                  <a
+                    href="/dashboard"
+                    className="dashboard-btn"
+                    onClick={clearSavedSession}
+                  >
                     Back to Dashboard
                   </a>
                 </div>
