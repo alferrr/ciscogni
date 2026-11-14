@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import fs from "fs";
 import path from "path";
 import { getAuthedUser } from "@/lib/auth";
+import { logActivity, actorFromUser } from "@/lib/activity";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,11 @@ export async function GET(req: NextRequest) {
   if (!expectedToken || token !== expectedToken) {
     return new Response("Forbidden", { status: 403 });
   }
+
+  await logActivity(req, {
+    action: "admin.build_logs_view",
+    actor: actorFromUser(user),
+  });
 
   const encoder = new TextEncoder();
   let position = 0;

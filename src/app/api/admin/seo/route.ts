@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { isAdminRequest } from "@/lib/auth";
 import { syncDB } from "@/lib/sync";
 import { getSeoSettings, updateSeoSettings } from "@/lib/seo";
+import { logActivity } from "@/lib/activity";
 
 export async function GET(req: NextRequest) {
   await syncDB();
@@ -31,6 +32,11 @@ export async function PUT(req: NextRequest) {
     description,
     keywords,
     ogImageUrl,
+  });
+  await logActivity(req, {
+    action: "admin.seo_update",
+    target: "seo settings",
+    details: { title, description, keywords, ogImageUrl },
   });
   return NextResponse.json(settings);
 }

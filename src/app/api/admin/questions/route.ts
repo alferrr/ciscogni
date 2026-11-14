@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { isAdminRequest } from "@/lib/auth";
 import { syncDB } from "@/lib/sync";
 import Question from "@/models/Question";
+import { logActivity } from "@/lib/activity";
 
 export async function GET(req: NextRequest) {
   await syncDB();
@@ -19,6 +20,11 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json();
   const question = await Question.create(body);
+  await logActivity(req, {
+    action: "admin.question_create",
+    target: `question #${(question as any).id}`,
+    details: { topic: body.topic },
+  });
   return NextResponse.json(question, { status: 201 });
 }
 
@@ -29,6 +35,10 @@ export async function DELETE(req: NextRequest) {
 
   const { id } = await req.json();
   await Question.destroy({ where: { id } });
+  await logActivity(req, {
+    action: "admin.question_delete",
+    target: `question #${id}`,
+  });
   return NextResponse.json({ message: "Question deleted." });
 }
 
@@ -39,5 +49,10 @@ export async function PUT(req: NextRequest) {
 
   const { id, ...updates } = await req.json();
   await Question.update(updates, { where: { id } });
+  await logActivity(req, {
+    action: "admin.question_update",
+    target: `question #${id}`,
+    details: { fields: Object.keys(updates) },
+  });
   return NextResponse.json({ message: "Question updated." });
 }

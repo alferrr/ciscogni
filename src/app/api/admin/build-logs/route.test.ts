@@ -1,6 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { NextRequest } from "next/server";
 
+vi.mock("@/lib/activity", () => ({
+  logActivity: vi.fn(),
+  actorFromUser: vi.fn(() => ({})),
+}));
 vi.mock("@/lib/auth", () => ({ getAuthedUser: vi.fn() }));
 
 import { GET } from "./route";

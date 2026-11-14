@@ -1,6 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
 
+vi.mock("@/lib/activity", () => ({
+  logActivity: vi.fn(),
+  actorFromUser: vi.fn(() => ({})),
+}));
 vi.mock("@/lib/sync", () => ({ syncDB: vi.fn() }));
 vi.mock("@/lib/auth", () => ({ isAdminRequest: vi.fn() }));
 vi.mock("@/models/User", () => ({
@@ -10,6 +14,7 @@ vi.mock("@/models/User", () => ({
 import { GET, DELETE, PUT } from "./route";
 import { isAdminRequest } from "@/lib/auth";
 import User from "@/models/User";
+import { logActivity } from "@/lib/activity";
 
 const makeRequest = (method: string, body?: unknown) =>
   new NextRequest("http://localhost/api/admin/users", {
@@ -44,6 +49,10 @@ describe("admin/users route", () => {
     vi.mocked(isAdminRequest).mockResolvedValue(true);
     await DELETE(makeRequest("DELETE", { id: 4 }));
     expect(User.destroy).toHaveBeenCalledWith({ where: { id: 4 } });
+    expect(logActivity).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ action: "admin.user_delete", target: "user #4" }),
+    );
   });
 
   it("PUT rejects an invalid role", async () => {

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { isAdminRequest } from "@/lib/auth";
 import { syncDB } from "@/lib/sync";
 import AdminTask from "@/models/AdminTask";
+import { logActivity } from "@/lib/activity";
 
 export async function GET(req: NextRequest) {
   await syncDB();
@@ -29,6 +30,11 @@ export async function POST(req: NextRequest) {
     text: String(text).trim(),
     pageId: pageId ?? null,
   });
+  await logActivity(req, {
+    action: "admin.task_create",
+    target: pageId ?? "general",
+    details: { text: String(text).trim() },
+  });
   return NextResponse.json(task, { status: 201 });
 }
 
@@ -43,6 +49,11 @@ export async function PUT(req: NextRequest) {
   if ("text" in body) updates.text = String(body.text).trim();
 
   await AdminTask.update(updates, { where: { id } });
+  await logActivity(req, {
+    action: "admin.task_update",
+    target: `task #${id}`,
+    details: updates,
+  });
   return NextResponse.json({ message: "Task updated." });
 }
 
@@ -53,5 +64,9 @@ export async function DELETE(req: NextRequest) {
 
   const { id } = await req.json();
   await AdminTask.destroy({ where: { id } });
+  await logActivity(req, {
+    action: "admin.task_delete",
+    target: `task #${id}`,
+  });
   return NextResponse.json({ message: "Task deleted." });
 }

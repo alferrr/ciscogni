@@ -1,6 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
 
+vi.mock("@/lib/activity", () => ({
+  logActivity: vi.fn(),
+  actorFromUser: vi.fn(() => ({})),
+}));
 vi.mock("@/lib/sync", () => ({ syncDB: vi.fn() }));
 vi.mock("@/lib/auth", () => ({ isAdminRequest: vi.fn() }));
 vi.mock("@/models/AdminTask", () => ({

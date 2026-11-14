@@ -4,6 +4,7 @@ import path from "path";
 import crypto from "crypto";
 import { isAdminRequest } from "@/lib/auth";
 import { syncDB } from "@/lib/sync";
+import { logActivity } from "@/lib/activity";
 
 const ALLOWED_TYPES: Record<string, string> = {
   "image/png": "png",
@@ -43,6 +44,12 @@ export async function POST(req: NextRequest) {
   const filename = `${crypto.randomUUID()}.${ext}`;
   const buffer = Buffer.from(await file.arrayBuffer());
   await writeFile(path.join(dir, filename), buffer);
+
+  await logActivity(req, {
+    action: "admin.seo_upload",
+    target: `/uploads/seo/${filename}`,
+    details: { size: file.size, type: file.type },
+  });
 
   return NextResponse.json({ url: `/uploads/seo/${filename}` });
 }

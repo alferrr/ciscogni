@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { isAdminRequest } from "@/lib/auth";
 import { syncDB } from "@/lib/sync";
 import User from "@/models/User";
+import { logActivity } from "@/lib/activity";
 
 export async function GET(req: NextRequest) {
   await syncDB();
@@ -33,6 +34,10 @@ export async function DELETE(req: NextRequest) {
 
   const { id } = await req.json();
   await User.destroy({ where: { id } });
+  await logActivity(req, {
+    action: "admin.user_delete",
+    target: `user #${id}`,
+  });
   return NextResponse.json({ message: "User deleted." });
 }
 
@@ -54,5 +59,10 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ message: "Invalid role" }, { status: 400 });
 
   await User.update(updates, { where: { id } });
+  await logActivity(req, {
+    action: "admin.user_update",
+    target: `user #${id}`,
+    details: updates,
+  });
   return NextResponse.json({ message: "User updated." });
 }
