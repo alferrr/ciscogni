@@ -50,3 +50,5 @@ next-env.d.ts
 
 # build output log (tailed by /admin/build-logs)
 /logs
+
+/dsa
