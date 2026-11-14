@@ -8,6 +8,7 @@ import "../models/AllowedStudent";
 import "../models/PageView";
 import "../models/AdminTask";
 import "../models/SeoSetting";
+import "../models/ActivityLog";
 
 let synced = false;
 

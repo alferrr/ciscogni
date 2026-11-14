@@ -18,6 +18,32 @@ SET @MYSQLDUMP_TEMP_LOG_BIN = @@SESSION.SQL_LOG_BIN;
 SET @@SESSION.SQL_LOG_BIN= 0;
 
 --
+-- Table structure for table `activity_logs`
+--
+
+DROP TABLE IF EXISTS `activity_logs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `activity_logs` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `userId` int DEFAULT NULL,
+  `userName` varchar(255) DEFAULT NULL,
+  `userRole` varchar(20) DEFAULT NULL,
+  `action` varchar(64) NOT NULL,
+  `category` varchar(32) NOT NULL,
+  `target` varchar(255) DEFAULT NULL,
+  `details` text,
+  `ip` varchar(64) DEFAULT NULL,
+  `userAgent` varchar(255) DEFAULT NULL,
+  `createdAt` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `activity_logs_created_at` (`createdAt`),
+  KEY `activity_logs_user_id` (`userId`),
+  KEY `activity_logs_category` (`category`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `admin_tasks`
 --
 
