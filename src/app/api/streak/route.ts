@@ -3,6 +3,7 @@ import { getAuthPayload } from "@/lib/auth";
 import { syncDB } from "@/lib/sync";
 import User from "@/models/User";
 import { DAILY_XP_BONUS } from "@/lib/xp";
+import { logActivity, actorFromUser } from "@/lib/activity";
 
 export async function POST(req: NextRequest) {
   await syncDB();
@@ -44,6 +45,12 @@ export async function POST(req: NextRequest) {
       streak: newStreak,
       lastDailyAt: today,
       xp: user.getDataValue("xp") + DAILY_XP_BONUS,
+    });
+
+    await logActivity(req, {
+      action: "quiz.daily_claim",
+      actor: actorFromUser(user),
+      details: { streak: newStreak, xpEarned: DAILY_XP_BONUS },
     });
 
     return NextResponse.json({

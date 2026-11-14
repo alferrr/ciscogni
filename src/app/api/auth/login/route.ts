@@ -5,6 +5,7 @@ import { syncDB } from "@/lib/sync";
 import User from "@/models/User";
 import AllowedStudent from "@/models/AllowedStudent";
 import { Op } from "sequelize";
+import { logActivity, actorFromUser } from "@/lib/activity";
 
 export async function POST(req: NextRequest) {
   await syncDB();
@@ -15,6 +16,11 @@ export async function POST(req: NextRequest) {
     // check if student is allowed
     const allowed = await AllowedStudent.findOne({ where: { studentId } });
     if (!allowed) {
+      await logActivity(req, {
+        action: "auth.login_failed",
+        target: studentId,
+        details: { reason: "student ID not in allowed list" },
+      });
       return NextResponse.json(
         { message: "Student ID not found in the system." },
         { status: 403 },
@@ -49,6 +55,13 @@ export async function POST(req: NextRequest) {
         course: "",
         year: "",
       });
+      // First login creates the account, so this is account activation.
+      await logActivity(req, {
+        action: "auth.account_activated",
+        actor: actorFromUser(user),
+        target: studentId,
+        details: { email: `${studentId}@usc.edu.ph` },
+      });
     } else if (!user.getDataValue("studentId")) {
       await user.update({ studentId });
     }
@@ -56,11 +69,23 @@ export async function POST(req: NextRequest) {
     // verify password
     const valid = await bcrypt.compare(password, user.getDataValue("password"));
     if (!valid) {
+      await logActivity(req, {
+        action: "auth.login_failed",
+        actor: actorFromUser(user),
+        target: studentId,
+        details: { reason: "incorrect password" },
+      });
       return NextResponse.json(
         { message: "Incorrect password." },
         { status: 401 },
       );
     }
+
+    await logActivity(req, {
+      action: "auth.login",
+      actor: actorFromUser(user),
+      target: studentId,
+    });
 
     const token = jwt.sign(
       {

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { syncDB } from "@/lib/sync";
 import { getAuthPayload } from "@/lib/auth";
 import PageView from "@/models/PageView";
+import { logActivity } from "@/lib/activity";
 
 export async function POST(req: NextRequest) {
   await syncDB();
@@ -17,6 +18,13 @@ export async function POST(req: NextRequest) {
       path: path.slice(0, 255),
       userId: decoded?.id ?? null,
     });
+    if (decoded) {
+      await logActivity(req, {
+        action: "navigation.page_view",
+        actor: { id: decoded.id, role: decoded.role },
+        target: path,
+      });
+    }
 
     return NextResponse.json({ ok: true });
   } catch (err) {

@@ -1,6 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
 
+vi.mock("@/lib/activity", () => ({
+  logActivity: vi.fn(),
+  actorFromUser: vi.fn(() => ({})),
+}));
 vi.mock("@/lib/sync", () => ({ syncDB: vi.fn() }));
 vi.mock("@/models/User", () => ({
   default: { findOne: vi.fn(), create: vi.fn() },
@@ -12,6 +16,7 @@ vi.mock("bcrypt", () => ({
 
 import { POST } from "./route";
 import User from "@/models/User";
+import { logActivity } from "@/lib/activity";
 import AllowedStudent from "@/models/AllowedStudent";
 import bcrypt from "bcrypt";
 
@@ -74,6 +79,14 @@ describe("POST /api/auth/login", () => {
     expect(res.status).toBe(200);
     expect(bcrypt.hash).toHaveBeenCalledWith("pena123", 10);
     expect(json.token).toBeDefined();
+    expect(logActivity).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ action: "auth.account_activated", target: "123" }),
+    );
+    expect(logActivity).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ action: "auth.login", target: "123" }),
+    );
   });
 
   it("rejects an incorrect password for an existing user", async () => {
@@ -93,6 +106,10 @@ describe("POST /api/auth/login", () => {
       makeRequest({ studentId: "456", password: "wrong" }),
     );
     expect(res.status).toBe(401);
+    expect(logActivity).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ action: "auth.login_failed", target: "456" }),
+    );
   });
 
   it("sets a token cookie on successful login", async () => {

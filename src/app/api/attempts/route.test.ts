@@ -2,6 +2,10 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
 import jwt from "jsonwebtoken";
 
+vi.mock("@/lib/activity", () => ({
+  logActivity: vi.fn(),
+  actorFromUser: vi.fn(() => ({})),
+}));
 vi.mock("@/lib/sync", () => ({ syncDB: vi.fn() }));
 vi.mock("@/models/Attempt", () => ({ default: { create: vi.fn() } }));
 vi.mock("@/models/User", () => ({ default: { findOne: vi.fn() } }));
@@ -11,6 +15,7 @@ import { POST } from "./route";
 import Attempt from "@/models/Attempt";
 import User from "@/models/User";
 import Question from "@/models/Question";
+import { logActivity } from "@/lib/activity";
 
 const SECRET = "test-secret";
 
@@ -70,6 +75,13 @@ describe("POST /api/attempts", () => {
     expect(json.isCorrect).toBe(false);
     expect(json.xpGained).toBe(0);
     expect(User.findOne).not.toHaveBeenCalled();
+    expect(logActivity).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        action: "quiz.practice_answer",
+        details: expect.objectContaining({ isCorrect: false, selectedAnswer: "a" }),
+      }),
+    );
   });
 
   it("awards XP for a correct timed (competitive) attempt and updates the user", async () => {
@@ -91,6 +103,13 @@ describe("POST /api/attempts", () => {
     expect(json.isCorrect).toBe(true);
     expect(json.xpGained).toBe(30);
     expect(user.update).toHaveBeenCalledWith({ xp: 130 });
+    expect(logActivity).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        action: "quiz.competitive_answer",
+        details: expect.objectContaining({ xpGained: 30, timeLeft: 12 }),
+      }),
+    );
   });
 
   it("never trusts a client-sent xpGained value", async () => {

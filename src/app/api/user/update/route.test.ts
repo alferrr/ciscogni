@@ -2,6 +2,10 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
 import jwt from "jsonwebtoken";
 
+vi.mock("@/lib/activity", () => ({
+  logActivity: vi.fn(),
+  actorFromUser: vi.fn(() => ({})),
+}));
 vi.mock("@/lib/sync", () => ({ syncDB: vi.fn() }));
 vi.mock("@/models/User", () => ({ default: { findOne: vi.fn() } }));
 vi.mock("bcrypt", () => ({
@@ -10,6 +14,7 @@ vi.mock("bcrypt", () => ({
 
 import { PUT } from "./route";
 import User from "@/models/User";
+import { logActivity } from "@/lib/activity";
 import bcrypt from "bcrypt";
 
 const SECRET = "test-secret";
@@ -37,6 +42,7 @@ describe("PUT /api/user/update", () => {
     vi.mocked(User.findOne).mockReset();
     vi.mocked(bcrypt.compare).mockReset();
     vi.mocked(bcrypt.hash).mockClear();
+    vi.mocked(logActivity).mockClear();
   });
 
   const validToken = () => jwt.sign({ id: 1 }, SECRET);
@@ -100,5 +106,60 @@ describe("PUT /api/user/update", () => {
     expect(user.update).toHaveBeenCalledWith(
       expect.objectContaining({ password: "new-hashed" }),
     );
+  });
+
+  const loggedActions = () =>
+    vi.mocked(logActivity).mock.calls.map(([, e]) => e.action);
+
+  it("logs a course change with the old and new value", async () => {
+    const user = fakeUser({ password: "x", course: "BSIT", year: "2" });
+    vi.mocked(User.findOne).mockResolvedValue(user as any);
+
+    await PUT(
+      makeRequest({ name: "A", course: "BSCS", year: "2" }, validToken()),
+    );
+
+    expect(loggedActions()).toContain("user.course_change");
+    expect(loggedActions()).not.toContain("user.year_change");
+    const event = vi
+      .mocked(logActivity)
+      .mock.calls.map(([, e]) => e)
+      .find((e) => e.action === "user.course_change");
+    expect(event?.details).toEqual({ from: "BSIT", to: "BSCS" });
+  });
+
+  it("logs a successful password change without leaking the password", async () => {
+    const user = fakeUser({ password: "old", course: "BSCS", year: "2" });
+    vi.mocked(User.findOne).mockResolvedValue(user as any);
+    vi.mocked(bcrypt.compare).mockResolvedValue(true);
+
+    await PUT(
+      makeRequest(
+        {
+          course: "BSCS",
+          year: "2",
+          currentPassword: "old",
+          newPassword: "newpass123",
+        },
+        validToken(),
+      ),
+    );
+
+    expect(loggedActions()).toContain("user.password_change");
+    expect(JSON.stringify(vi.mocked(logActivity).mock.calls)).not.toContain(
+      "newpass123",
+    );
+  });
+
+  it("logs a failed password change attempt", async () => {
+    const user = fakeUser({ password: "old" });
+    vi.mocked(User.findOne).mockResolvedValue(user as any);
+    vi.mocked(bcrypt.compare).mockResolvedValue(false);
+
+    await PUT(
+      makeRequest({ currentPassword: "bad", newPassword: "n" }, validToken()),
+    );
+
+    expect(loggedActions()).toEqual(["user.password_change_failed"]);
   });
 });

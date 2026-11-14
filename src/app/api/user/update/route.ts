@@ -3,6 +3,7 @@ import { getAuthPayload } from "@/lib/auth";
 import bcrypt from "bcrypt";
 import { syncDB } from "@/lib/sync";
 import User from "@/models/User";
+import { logActivity, actorFromUser } from "@/lib/activity";
 
 export async function PUT(req: NextRequest) {
   await syncDB();
@@ -19,21 +20,61 @@ export async function PUT(req: NextRequest) {
       await req.json();
 
     const updates: any = { name, course, year };
+    const before = {
+      name: user.getDataValue("name"),
+      course: user.getDataValue("course"),
+      year: user.getDataValue("year"),
+    };
+    const actor = actorFromUser(user);
 
     if (currentPassword && newPassword) {
       const valid = await bcrypt.compare(
         currentPassword,
         user.getDataValue("password"),
       );
-      if (!valid)
+      if (!valid) {
+        await logActivity(req, {
+          action: "user.password_change_failed",
+          actor,
+          details: { reason: "current password incorrect" },
+        });
         return NextResponse.json(
           { message: "Current password is incorrect." },
           { status: 400 },
         );
+      }
       updates.password = await bcrypt.hash(newPassword, 10);
     }
 
     await user.update(updates);
+
+    await logActivity(req, {
+      action: "user.profile_update",
+      actor,
+      details: {
+        name,
+        course,
+        year,
+        passwordChanged: "password" in updates,
+      },
+    });
+    if ("password" in updates) {
+      await logActivity(req, { action: "user.password_change", actor });
+    }
+    if (course !== before.course) {
+      await logActivity(req, {
+        action: "user.course_change",
+        actor,
+        details: { from: before.course, to: course },
+      });
+    }
+    if (year !== before.year) {
+      await logActivity(req, {
+        action: "user.year_change",
+        actor,
+        details: { from: before.year, to: year },
+      });
+    }
 
     return NextResponse.json({
       message: "Profile updated successfully.",

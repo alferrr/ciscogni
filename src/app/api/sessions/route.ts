@@ -3,6 +3,7 @@ import { getAuthPayload } from "@/lib/auth";
 import { syncDB } from "@/lib/sync";
 import Session from "@/models/Session";
 import { MAX_COMPETITIVE_XP, clamp } from "@/lib/xp";
+import { logActivity } from "@/lib/activity";
 
 const VALID_MODES = ["practice", "midterms", "finals"];
 const MAX_QUESTIONS = 100;
@@ -34,6 +35,13 @@ export async function POST(req: NextRequest) {
       score: safeScore,
       total: safeTotal,
       xpEarned: safeXp,
+    });
+
+    await logActivity(req, {
+      action: "quiz.session_complete",
+      actor: { id: decoded.id, role: decoded.role },
+      target: mode,
+      details: { score: safeScore, total: safeTotal, xpEarned: safeXp },
     });
 
     return NextResponse.json(session);

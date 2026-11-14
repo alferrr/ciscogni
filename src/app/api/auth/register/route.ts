@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import { syncDB } from "@/lib/sync";
 import User from "@/models/User";
 import AllowedStudent from "@/models/AllowedStudent";
+import { logActivity } from "@/lib/activity";
 
 export async function POST(req: NextRequest) {
   await syncDB();
@@ -42,13 +43,20 @@ export async function POST(req: NextRequest) {
 
     const email = `${studentId}@usc.edu.ph`;
 
-    await User.create({
+    const created = await User.create({
       name,
       email,
       studentId,
       password: hashed,
       course,
       year,
+    });
+
+    await logActivity(req, {
+      action: "auth.register",
+      actor: { id: (created as any).id, name, role: "student" },
+      target: studentId,
+      details: { course, year },
     });
 
     return NextResponse.json(

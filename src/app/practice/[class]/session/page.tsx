@@ -124,6 +124,13 @@ const SessionInner = () => {
 
   const handleNext = () => {
     if (current + 1 >= questions.length) {
+      axios
+        .post("/api/practice-complete", {
+          classId,
+          score,
+          total: questions.length,
+        })
+        .catch(() => {});
       setDone(true);
       return;
     }
