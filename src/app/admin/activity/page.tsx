@@ -13,7 +13,6 @@ type LogRow = {
   category: string;
   target: string | null;
   details: string | null;
-  ip: string | null;
   userAgent: string | null;
   createdAt: string;
 };
@@ -96,7 +95,7 @@ const AdminActivity = () => {
       <div className="activity-filters">
         <input
           className="admin-search"
-          placeholder="Search user, action, target, IP..."
+          placeholder="Search user, action, target..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -150,15 +149,14 @@ const AdminActivity = () => {
                 <th>Action</th>
                 <th>Target</th>
                 <th>Details</th>
-                <th>IP</th>
               </tr>
             </thead>
             <tbody>
-              {loading && <AdminTableSkeleton columns={6} />}
+              {loading && <AdminTableSkeleton columns={5} />}
               {!loading && logs.length === 0 && (
                 <tr>
                   <td
-                    colSpan={6}
+                    colSpan={5}
                     style={{
                       textAlign: "center",
                       color: "var(--muted)",
@@ -205,9 +203,6 @@ const AdminActivity = () => {
                       {expanded === l.id && l.userAgent && (
                         <div className="activity-ua">{l.userAgent}</div>
                       )}
-                    </td>
-                    <td style={{ color: "var(--muted)", fontSize: "13px" }}>
-                      {l.ip}
                     </td>
                   </tr>
                 ))}

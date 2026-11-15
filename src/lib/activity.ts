@@ -19,11 +19,6 @@ export type ActivityEvent = {
 
 const SENSITIVE_KEYS = /pass(word)?|token|secret/i;
 
-const clientIp = (req: NextRequest) =>
-  req.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
-  req.headers.get("x-real-ip") ||
-  null;
-
 const redact = (details: Record<string, unknown>) =>
   Object.fromEntries(
     Object.entries(details).map(([k, v]) => [
@@ -80,7 +75,6 @@ export async function logActivity(req: NextRequest, event: ActivityEvent) {
       category: action.split(".")[0],
       target: target != null ? String(target).slice(0, 255) : null,
       details: details ? JSON.stringify(redact(details)).slice(0, 5000) : null,
-      ip: clientIp(req)?.slice(0, 64) ?? null,
       userAgent: req.headers.get("user-agent")?.slice(0, 255) ?? null,
     });
   } catch (err) {

@@ -24,9 +24,9 @@ describe("logActivity", () => {
     vi.mocked(User.findByPk).mockReset();
   });
 
-  it("stores the event with category, ip and user agent", async () => {
+  it("stores the event with category and user agent", async () => {
     await logActivity(
-      makeRequest({ "x-forwarded-for": "1.2.3.4, 5.6.7.8", "user-agent": "UA" }),
+      makeRequest({ "user-agent": "UA" }),
       {
         action: "auth.login",
         actor: { id: 3, name: "Ann", role: "student" },
@@ -40,7 +40,6 @@ describe("logActivity", () => {
       action: "auth.login",
       category: "auth",
       target: "2024-1",
-      ip: "1.2.3.4",
       userAgent: "UA",
     });
   });

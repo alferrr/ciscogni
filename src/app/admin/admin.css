@@ -1019,10 +1019,6 @@ html.dark .admin-shell {
     background: rgba(168, 85, 247, 0.12);
     color: #a855f7;
   }
-  &.navigation {
-    background: rgba(120, 120, 120, 0.12);
-    color: var(--muted);
-  }
 }
 
 .activity-details {

@@ -40,7 +40,6 @@ export async function GET(req: NextRequest) {
         { action: { [Op.like]: like } },
         { target: { [Op.like]: like } },
         { details: { [Op.like]: like } },
-        { ip: { [Op.like]: like } },
       ],
     });
   }

@@ -42,10 +42,6 @@ ActivityLog.init(
       type: DataTypes.TEXT,
       allowNull: true,
     },
-    ip: {
-      type: DataTypes.STRING(64),
-      allowNull: true,
-    },
     userAgent: {
       type: DataTypes.STRING,
       allowNull: true,

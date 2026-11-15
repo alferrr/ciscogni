@@ -33,7 +33,6 @@ CREATE TABLE `activity_logs` (
   `category` varchar(32) NOT NULL,
   `target` varchar(255) DEFAULT NULL,
   `details` text,
-  `ip` varchar(64) DEFAULT NULL,
   `userAgent` varchar(255) DEFAULT NULL,
   `createdAt` datetime NOT NULL,
   PRIMARY KEY (`id`),
