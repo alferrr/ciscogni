@@ -38,10 +38,6 @@ ActivityLog.init(
       type: DataTypes.STRING,
       allowNull: true,
     },
-    userAgent: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
   },
   {
     sequelize,

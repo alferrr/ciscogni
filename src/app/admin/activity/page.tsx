@@ -21,7 +21,6 @@ type LogRow = {
   action: string;
   category: string;
   target: string | null;
-  userAgent: string | null;
   createdAt: string;
 };
 
@@ -212,9 +211,6 @@ const AdminActivity = () => {
                     </td>
                     <td className="activity-description">
                       {describeAction(l)}
-                      {expanded === l.id && l.userAgent && (
-                        <div className="activity-ua">{l.userAgent}</div>
-                      )}
                     </td>
                     <td>
                       <span className={`activity-action ${l.category}`}>

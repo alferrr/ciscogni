@@ -24,9 +24,9 @@ describe("logActivity", () => {
     vi.mocked(User.findByPk).mockReset();
   });
 
-  it("stores the event with category and user agent", async () => {
+  it("stores the event with category", async () => {
     await logActivity(
-      makeRequest({ "user-agent": "UA" }),
+      makeRequest(),
       {
         action: "auth.login",
         actor: { id: 3, name: "Ann", role: "student" },
@@ -40,7 +40,6 @@ describe("logActivity", () => {
       action: "auth.login",
       category: "auth",
       target: "2024-1",
-      userAgent: "UA",
     });
   });
 

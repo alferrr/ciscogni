@@ -32,7 +32,6 @@ CREATE TABLE `activity_logs` (
   `action` varchar(64) NOT NULL,
   `category` varchar(32) NOT NULL,
   `target` varchar(255) DEFAULT NULL,
-  `userAgent` varchar(255) DEFAULT NULL,
   `createdAt` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `activity_logs_created_at` (`createdAt`),

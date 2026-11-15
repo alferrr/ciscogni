@@ -63,7 +63,6 @@ export async function logActivity(req: NextRequest, event: ActivityEvent) {
       action,
       category: action.split(".")[0],
       target: target != null ? String(target).slice(0, 255) : null,
-      userAgent: req.headers.get("user-agent")?.slice(0, 255) ?? null,
     });
   } catch (err) {
     console.error("Failed to write activity log:", err);

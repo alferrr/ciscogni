@@ -1144,9 +1144,3 @@ html.dark .admin-shell {
   font-size: 13px;
   color: var(--muted);
 }
-
-.activity-ua {
-  margin-top: 6px;
-  font-size: 11px;
-  opacity: 0.8;
-}
