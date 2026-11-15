@@ -36,7 +36,6 @@ export async function PUT(req: NextRequest) {
   await logActivity(req, {
     action: "admin.seo_update",
     target: "seo settings",
-    details: { title, description, keywords, ogImageUrl },
   });
   return NextResponse.json(settings);
 }

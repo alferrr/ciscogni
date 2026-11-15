@@ -56,7 +56,6 @@ export async function POST(req: NextRequest) {
       action: "auth.register",
       actor: { id: (created as any).id, name, role: "student" },
       target: studentId,
-      details: { course, year },
     });
 
     return NextResponse.json(

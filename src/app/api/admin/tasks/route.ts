@@ -33,7 +33,6 @@ export async function POST(req: NextRequest) {
   await logActivity(req, {
     action: "admin.task_create",
     target: pageId ?? "general",
-    details: { text: String(text).trim() },
   });
   return NextResponse.json(task, { status: 201 });
 }
@@ -52,7 +51,6 @@ export async function PUT(req: NextRequest) {
   await logActivity(req, {
     action: "admin.task_update",
     target: `task #${id}`,
-    details: updates,
   });
   return NextResponse.json({ message: "Task updated." });
 }

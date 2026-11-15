@@ -19,7 +19,6 @@ type LogRow = {
   action: string;
   category: string;
   target: string | null;
-  details: string | null;
   userAgent: string | null;
   createdAt: string;
 };
@@ -93,7 +92,7 @@ const AdminActivity = () => {
           <span>Search</span>
           <input
             className="admin-search"
-            placeholder="Name or keyword"
+            placeholder="Name or activity"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />

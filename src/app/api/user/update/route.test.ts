@@ -121,11 +121,6 @@ describe("PUT /api/user/update", () => {
 
     expect(loggedActions()).toContain("user.course_change");
     expect(loggedActions()).not.toContain("user.year_change");
-    const event = vi
-      .mocked(logActivity)
-      .mock.calls.map(([, e]) => e)
-      .find((e) => e.action === "user.course_change");
-    expect(event?.details).toEqual({ from: "BSIT", to: "BSCS" });
   });
 
   it("logs a successful password change without leaking the password", async () => {

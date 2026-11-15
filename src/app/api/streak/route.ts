@@ -50,7 +50,6 @@ export async function POST(req: NextRequest) {
     await logActivity(req, {
       action: "quiz.daily_claim",
       actor: actorFromUser(user),
-      details: { streak: newStreak, xpEarned: DAILY_XP_BONUS },
     });
 
     return NextResponse.json({

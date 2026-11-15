@@ -44,20 +44,6 @@ describe("logActivity", () => {
     });
   });
 
-  it("redacts sensitive detail keys", async () => {
-    await logActivity(makeRequest(), {
-      action: "user.profile_update",
-      actor: { id: 1, name: "A" },
-      details: { name: "A", newPassword: "hunter2", token: "abc" },
-    });
-    const details = JSON.parse(created().details);
-    expect(details).toEqual({
-      name: "A",
-      newPassword: "[redacted]",
-      token: "[redacted]",
-    });
-  });
-
   it("resolves the actor from the session cookie when none is given", async () => {
     const token = jwt.sign({ id: 9, role: "admin" }, SECRET);
     vi.mocked(User.findByPk).mockResolvedValue({

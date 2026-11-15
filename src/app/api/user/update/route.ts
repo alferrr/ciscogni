@@ -36,7 +36,6 @@ export async function PUT(req: NextRequest) {
         await logActivity(req, {
           action: "user.password_change_failed",
           actor,
-          details: { reason: "current password incorrect" },
         });
         return NextResponse.json(
           { message: "Current password is incorrect." },
@@ -51,12 +50,6 @@ export async function PUT(req: NextRequest) {
     await logActivity(req, {
       action: "user.profile_update",
       actor,
-      details: {
-        name,
-        course,
-        year,
-        passwordChanged: "password" in updates,
-      },
     });
     if ("password" in updates) {
       await logActivity(req, { action: "user.password_change", actor });
@@ -65,14 +58,12 @@ export async function PUT(req: NextRequest) {
       await logActivity(req, {
         action: "user.course_change",
         actor,
-        details: { from: before.course, to: course },
       });
     }
     if (year !== before.year) {
       await logActivity(req, {
         action: "user.year_change",
         actor,
-        details: { from: before.year, to: year },
       });
     }
 

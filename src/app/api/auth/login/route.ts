@@ -19,7 +19,6 @@ export async function POST(req: NextRequest) {
       await logActivity(req, {
         action: "auth.login_failed",
         target: studentId,
-        details: { reason: "student ID not in allowed list" },
       });
       return NextResponse.json(
         { message: "Student ID not found in the system." },
@@ -60,7 +59,6 @@ export async function POST(req: NextRequest) {
         action: "auth.account_activated",
         actor: actorFromUser(user),
         target: studentId,
-        details: { email: `${studentId}@usc.edu.ph` },
       });
     } else if (!user.getDataValue("studentId")) {
       await user.update({ studentId });
@@ -73,7 +71,6 @@ export async function POST(req: NextRequest) {
         action: "auth.login_failed",
         actor: actorFromUser(user),
         target: studentId,
-        details: { reason: "incorrect password" },
       });
       return NextResponse.json(
         { message: "Incorrect password." },

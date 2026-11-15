@@ -48,7 +48,6 @@ export async function POST(req: NextRequest) {
   await logActivity(req, {
     action: "admin.seo_upload",
     target: `/uploads/seo/${filename}`,
-    details: { size: file.size, type: file.type },
   });
 
   return NextResponse.json({ url: `/uploads/seo/${filename}` });

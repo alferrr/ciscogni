@@ -62,7 +62,6 @@ export async function PUT(req: NextRequest) {
   await logActivity(req, {
     action: "admin.user_update",
     target: `user #${id}`,
-    details: updates,
   });
   return NextResponse.json({ message: "User updated." });
 }

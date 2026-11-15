@@ -23,7 +23,6 @@ export async function POST(req: NextRequest) {
   await logActivity(req, {
     action: "admin.question_create",
     target: `question #${(question as any).id}`,
-    details: { topic: body.topic },
   });
   return NextResponse.json(question, { status: 201 });
 }
@@ -52,7 +51,6 @@ export async function PUT(req: NextRequest) {
   await logActivity(req, {
     action: "admin.question_update",
     target: `question #${id}`,
-    details: { fields: Object.keys(updates) },
   });
   return NextResponse.json({ message: "Question updated." });
 }

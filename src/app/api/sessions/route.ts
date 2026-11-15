@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthPayload } from "@/lib/auth";
 import { syncDB } from "@/lib/sync";
+import { Op } from "sequelize";
 import Session from "@/models/Session";
 import { MAX_COMPETITIVE_XP, clamp } from "@/lib/xp";
 import { logActivity } from "@/lib/activity";
@@ -41,7 +42,6 @@ export async function POST(req: NextRequest) {
       action: "quiz.session_complete",
       actor: { id: decoded.id, role: decoded.role },
       target: mode,
-      details: { score: safeScore, total: safeTotal, xpEarned: safeXp },
     });
 
     return NextResponse.json(session);
@@ -62,7 +62,8 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
     const sessions = await Session.findAll({
-      where: { userId: decoded.id },
+      // Practice runs are only for admin review; the dashboard lists exams.
+      where: { userId: decoded.id, mode: { [Op.ne]: "practice" } },
       order: [["createdAt", "DESC"]],
       limit: 5,
     });

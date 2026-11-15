@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAuthPayload } from "@/lib/auth";
 import { syncDB } from "@/lib/sync";
 import { clamp } from "@/lib/xp";
+import Session from "@/models/Session";
 import { logActivity } from "@/lib/activity";
 
 const MAX_QUESTIONS = 100;
 
-// Practice has no Session row (it awards no XP), so the final score is only
-// recorded in the activity log.
+// Practice awards no XP, but the final score is stored as a Session row so
+// admins can review it under Quiz Results.
 export async function POST(req: NextRequest) {
   await syncDB();
 
@@ -20,11 +21,18 @@ export async function POST(req: NextRequest) {
     const safeTotal = clamp(total, 0, MAX_QUESTIONS);
     const safeScore = clamp(score, 0, safeTotal);
 
+    await Session.create({
+      userId: decoded.id,
+      mode: "practice",
+      score: safeScore,
+      total: safeTotal,
+      xpEarned: 0,
+    });
+
     await logActivity(req, {
       action: "quiz.practice_complete",
       actor: { id: decoded.id, role: decoded.role },
       target: typeof classId === "string" ? classId.slice(0, 64) : null,
-      details: { score: safeScore, total: safeTotal },
     });
 
     return NextResponse.json({ ok: true });
