@@ -9,6 +9,9 @@ export type QuizAnswer = {
 };
 
 export type QuizResult = {
+  studentName: string | null;
+  studentId: string | null;
+  finishedAt: string;
   mode: string;
   score: number;
   total: number;

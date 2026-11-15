@@ -4,12 +4,14 @@ vi.mock("@/models/ActivityLog", () => ({ default: { findByPk: vi.fn() } }));
 vi.mock("@/models/Session", () => ({ default: { findAll: vi.fn() } }));
 vi.mock("@/models/Attempt", () => ({ default: { findAll: vi.fn() } }));
 vi.mock("@/models/Question", () => ({ default: { findAll: vi.fn() } }));
+vi.mock("@/models/User", () => ({ default: { findByPk: vi.fn() } }));
 
 import { getQuizResult } from "./quizResult";
 import ActivityLog from "@/models/ActivityLog";
 import Session from "@/models/Session";
 import Attempt from "@/models/Attempt";
 import Question from "@/models/Question";
+import User from "@/models/User";
 
 const model = (data: Record<string, unknown>) =>
   ({ getDataValue: (k: string) => data[k] }) as never;
@@ -22,6 +24,9 @@ describe("getQuizResult", () => {
     vi.mocked(Session.findAll).mockReset();
     vi.mocked(Attempt.findAll).mockReset();
     vi.mocked(Question.findAll).mockReset();
+    vi.mocked(User.findByPk).mockResolvedValue(
+      model({ name: "Ann", studentId: "19020241" }),
+    );
   });
 
   it("returns null for non-quiz log entries", async () => {
@@ -71,7 +76,13 @@ describe("getQuizResult", () => {
     ]);
 
     const r = await getQuizResult(9);
-    expect(r).toMatchObject({ mode: "midterms", score: 1, total: 2 });
+    expect(r).toMatchObject({
+      mode: "midterms",
+      score: 1,
+      total: 2,
+      studentName: "Ann",
+      studentId: "19020241",
+    });
     expect(r?.answers.map((a) => a.question)).toEqual(["Q1", "Q2"]);
     expect(r?.answers[1]).toMatchObject({
       selected: "x",

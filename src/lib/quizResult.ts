@@ -3,6 +3,7 @@ import ActivityLog from "@/models/ActivityLog";
 import Session from "@/models/Session";
 import Attempt from "@/models/Attempt";
 import Question from "@/models/Question";
+import User from "@/models/User";
 import type { QuizAnswer, QuizResult } from "@/components/QuizResultView/QuizResultView";
 import { COMPLETE_ACTIONS } from "@/lib/quizActions";
 
@@ -86,7 +87,14 @@ export async function getQuizResult(logId: number): Promise<QuizResult | null> {
     ];
   });
 
+  const user = await User.findByPk(userId, {
+    attributes: ["name", "studentId"],
+  });
+
   return {
+    studentName: user?.getDataValue("name") ?? log.getDataValue("userName"),
+    studentId: user?.getDataValue("studentId") ?? null,
+    finishedAt: session.getDataValue("createdAt"),
     mode: session.getDataValue("mode"),
     score: session.getDataValue("score"),
     total,

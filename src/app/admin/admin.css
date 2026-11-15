@@ -1058,14 +1058,25 @@ html.dark .admin-shell {
   }
 }
 
+.activity-view-link {
+  color: var(--blue);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 .activity-muted {
   color: var(--muted);
   font-size: 13px;
 }
 
-.activity-result-row > td {
-  background: rgba(120, 120, 120, 0.05);
-  padding: 1rem 1.25rem;
+.quiz-result-page {
+  padding: 1.25rem 1.5rem;
+}
+
+.quiz-result-meta {
+  margin: 0 0 1rem;
+  font-size: 14px;
+  color: var(--muted);
 }
 
 .quiz-result-summary {

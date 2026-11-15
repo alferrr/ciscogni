@@ -1,8 +1,8 @@
 "use client";
-import { Fragment, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import { FaArrowsRotate } from "react-icons/fa6";
-import QuizResultView, { type QuizResult } from "@/components/QuizResultView/QuizResultView";
 import AdminTableSkeleton from "@/components/Skeleton/AdminTableSkeleton";
 import { COMPLETE_ACTIONS } from "@/lib/quizActions";
 import {
@@ -36,23 +36,7 @@ const AdminActivity = () => {
   const [category, setCategory] = useState("");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
-  const [expanded, setExpanded] = useState<number | null>(null);
-  const [results, setResults] = useState<
-    Record<number, QuizResult | "loading" | "none">
-  >({});
-
-  const toggleRow = async (l: LogRow) => {
-    const opening = expanded !== l.id;
-    setExpanded(opening ? l.id : null);
-    if (!opening || !COMPLETE_ACTIONS.includes(l.action) || results[l.id]) return;
-    setResults((r) => ({ ...r, [l.id]: "loading" }));
-    try {
-      const { data } = await axios.get(`/api/admin/activity/${l.id}`);
-      setResults((r) => ({ ...r, [l.id]: data }));
-    } catch {
-      setResults((r) => ({ ...r, [l.id]: "none" }));
-    }
-  };
+  const router = useRouter();
 
   const perPage = 50;
 
@@ -190,10 +174,15 @@ const AdminActivity = () => {
               )}
               {!loading &&
                 logs.map((l) => (
-                  <Fragment key={l.id}>
                   <tr
-                    className="activity-row"
-                    onClick={() => toggleRow(l)}
+                    key={l.id}
+                    className={
+                      COMPLETE_ACTIONS.includes(l.action) ? "activity-row" : ""
+                    }
+                    onClick={() =>
+                      COMPLETE_ACTIONS.includes(l.action) &&
+                      router.push(`/admin/activity/${l.id}`)
+                    }
                   >
                     <td style={{ whiteSpace: "nowrap", fontSize: "13px" }}>
                       {formatTime(l.createdAt)}
@@ -211,6 +200,9 @@ const AdminActivity = () => {
                     </td>
                     <td className="activity-description">
                       {describeAction(l)}
+                      {COMPLETE_ACTIONS.includes(l.action) && (
+                        <span className="activity-view-link"> View results →</span>
+                      )}
                     </td>
                     <td>
                       <span className={`activity-action ${l.category}`}>
@@ -218,22 +210,6 @@ const AdminActivity = () => {
                       </span>
                     </td>
                   </tr>
-                  {expanded === l.id && COMPLETE_ACTIONS.includes(l.action) && (
-                    <tr className="activity-result-row">
-                      <td colSpan={4}>
-                        {results[l.id] === "loading" || !results[l.id] ? (
-                          <span className="activity-muted">Loading results...</span>
-                        ) : results[l.id] === "none" ? (
-                          <span className="activity-muted">
-                            No saved results found for this quiz.
-                          </span>
-                        ) : (
-                          <QuizResultView result={results[l.id] as QuizResult} />
-                        )}
-                      </td>
-                    </tr>
-                  )}
-                  </Fragment>
                 ))}
             </tbody>
           </table>
