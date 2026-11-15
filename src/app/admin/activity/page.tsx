@@ -3,6 +3,12 @@ import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { FaArrowsRotate } from "react-icons/fa6";
 import AdminTableSkeleton from "@/components/Skeleton/AdminTableSkeleton";
+import {
+  categoryLabel,
+  describeAction,
+  describeDetails,
+  formatTime,
+} from "@/lib/activityText";
 
 type LogRow = {
   id: number;
@@ -15,17 +21,6 @@ type LogRow = {
   details: string | null;
   userAgent: string | null;
   createdAt: string;
-};
-
-const formatDetails = (raw: string | null) => {
-  if (!raw) return "";
-  try {
-    return Object.entries(JSON.parse(raw))
-      .map(([k, v]) => `${k}: ${typeof v === "object" ? JSON.stringify(v) : v}`)
-      .join(", ");
-  } catch {
-    return raw;
-  }
 };
 
 const AdminActivity = () => {
@@ -95,7 +90,7 @@ const AdminActivity = () => {
       <div className="activity-filters">
         <input
           className="admin-search"
-          placeholder="Search user, action, target..."
+          placeholder="Search by user, activity or details..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -107,10 +102,10 @@ const AdminActivity = () => {
             setPage(1);
           }}
         >
-          <option value="">All categories</option>
+          <option value="">All activity</option>
           {categories.map((c) => (
             <option key={c} value={c}>
-              {c}
+              {categoryLabel(c)}
             </option>
           ))}
         </select>
@@ -146,17 +141,16 @@ const AdminActivity = () => {
               <tr>
                 <th>Time</th>
                 <th>User</th>
-                <th>Action</th>
-                <th>Target</th>
+                <th>Activity</th>
                 <th>Details</th>
               </tr>
             </thead>
             <tbody>
-              {loading && <AdminTableSkeleton columns={5} />}
+              {loading && <AdminTableSkeleton columns={4} />}
               {!loading && logs.length === 0 && (
                 <tr>
                   <td
-                    colSpan={5}
+                    colSpan={4}
                     style={{
                       textAlign: "center",
                       color: "var(--muted)",
@@ -174,8 +168,11 @@ const AdminActivity = () => {
                     className="activity-row"
                     onClick={() => setExpanded(expanded === l.id ? null : l.id)}
                   >
-                    <td style={{ whiteSpace: "nowrap", fontSize: "13px" }}>
-                      {new Date(l.createdAt).toLocaleString()}
+                    <td
+                      style={{ whiteSpace: "nowrap", fontSize: "13px" }}
+                      title={new Date(l.createdAt).toLocaleString()}
+                    >
+                      {formatTime(l.createdAt)}
                     </td>
                     <td>
                       {l.userName ?? (l.userId ? `User #${l.userId}` : "Anonymous")}
@@ -190,16 +187,15 @@ const AdminActivity = () => {
                     </td>
                     <td>
                       <span className={`activity-action ${l.category}`}>
-                        {l.action}
+                        {describeAction(l)}
                       </span>
                     </td>
-                    <td style={{ fontSize: "13px" }}>{l.target}</td>
                     <td
                       className={
                         expanded === l.id ? "activity-details open" : "activity-details"
                       }
                     >
-                      {formatDetails(l.details)}
+                      {describeDetails(l)}
                       {expanded === l.id && l.userAgent && (
                         <div className="activity-ua">{l.userAgent}</div>
                       )}
