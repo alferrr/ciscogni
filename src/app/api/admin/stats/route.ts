@@ -6,14 +6,62 @@ import sequelize from "@/lib/db";
 import User from "@/models/User";
 import Question from "@/models/Question";
 import PageView from "@/models/PageView";
+import Session from "@/models/Session";
+
+type DayRow = { day: string; n: string };
+
+// Rows of { day, n } -> one count per day for the 7 days starting at `start`.
+const toDailyCounts = (rows: DayRow[], start: Date): number[] =>
+  Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(start);
+    d.setUTCDate(start.getUTCDate() + i);
+    const key = d.toISOString().split("T")[0];
+    const row = rows.find((r) => {
+      const t = new Date(r.day);
+      return !isNaN(+t) && t.toISOString().split("T")[0] === key;
+    });
+    return row ? Number(row.n) : 0;
+  });
 
 export async function GET(req: NextRequest) {
   await syncDB();
   if (!(await isAdminRequest(req)))
     return NextResponse.json({ message: "Forbidden" }, { status: 403 });
 
-  const [userCount, students, teachers, admins, questionCount, typeCounts] =
-    await Promise.all([
+  const rangeStart = new Date();
+  rangeStart.setUTCHours(0, 0, 0, 0);
+  rangeStart.setUTCDate(rangeStart.getUTCDate() - 6);
+
+  // Per-day row counts for the last 7 days, used for the stat-card bars.
+  const perDay = async (
+    model: typeof User | typeof Question | typeof Session,
+    where: Record<string, unknown> = {},
+  ) =>
+    toDailyCounts(
+      (await model.findAll({
+        attributes: [
+          [sequelize.fn("DATE", sequelize.col("createdAt")), "day"],
+          [sequelize.fn("COUNT", sequelize.col("id")), "n"],
+        ],
+        where: { ...where, createdAt: { [Op.gte]: rangeStart } },
+        group: [sequelize.fn("DATE", sequelize.col("createdAt"))],
+        raw: true,
+      })) as unknown as DayRow[],
+      rangeStart,
+    );
+
+  const [
+    userCount,
+    students,
+    teachers,
+    admins,
+    questionCount,
+    typeCounts,
+    quizCount,
+    signupsDaily,
+    questionsDaily,
+    quizzesDaily,
+  ] = await Promise.all([
       User.count(),
       User.count({ where: { role: "student" } }),
       User.count({ where: { role: "teacher" } }),
@@ -27,11 +75,11 @@ export async function GET(req: NextRequest) {
         group: ["type"],
         raw: true,
       }),
+      Session.count(),
+      perDay(User, { role: "student" }),
+      perDay(Question),
+      perDay(Session),
     ]);
-
-  const rangeStart = new Date();
-  rangeStart.setUTCHours(0, 0, 0, 0);
-  rangeStart.setUTCDate(rangeStart.getUTCDate() - 6);
 
   const trafficRows = (await PageView.findAll({
     attributes: [
@@ -71,6 +119,12 @@ export async function GET(req: NextRequest) {
       teachers,
       admins,
       questions: questionCount,
+      quizzes: quizCount,
+    },
+    daily: {
+      signups: signupsDaily,
+      questions: questionsDaily,
+      quizzes: quizzesDaily,
     },
     typeBreakdown: (typeCounts as unknown as { type: string; count: string }[]).map(
       (t) => ({ type: t.type, count: Number(t.count) }),

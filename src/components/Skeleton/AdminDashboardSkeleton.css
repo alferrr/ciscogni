@@ -2,28 +2,23 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-bottom: 1.5rem;
-}
-
-.ads-action-card {
-  background: var(--secondary);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 1.4rem;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.ads-action-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 6px;
 }
 
 .ads-header-text {
   display: flex;
   flex-direction: column;
+  gap: 8px;
+  margin-bottom: 1rem;
+}
+
+.ads-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.ads-row .ads-header-text {
+  margin-bottom: 0;
   gap: 6px;
 }

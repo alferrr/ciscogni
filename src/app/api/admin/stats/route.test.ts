@@ -9,7 +9,12 @@ vi.mock("@/lib/db", () => ({
     col: vi.fn((name: string) => `col(${name})`),
   },
 }));
-vi.mock("@/models/User", () => ({ default: { count: vi.fn() } }));
+vi.mock("@/models/User", () => ({
+  default: { count: vi.fn(), findAll: vi.fn() },
+}));
+vi.mock("@/models/Session", () => ({
+  default: { count: vi.fn(), findAll: vi.fn() },
+}));
 vi.mock("@/models/Question", () => ({
   default: { count: vi.fn(), findAll: vi.fn() },
 }));
@@ -18,6 +23,7 @@ vi.mock("@/models/PageView", () => ({ default: { findAll: vi.fn() } }));
 import { GET } from "./route";
 import { isAdminRequest } from "@/lib/auth";
 import User from "@/models/User";
+import Session from "@/models/Session";
 import Question from "@/models/Question";
 import PageView from "@/models/PageView";
 
@@ -30,6 +36,12 @@ describe("GET /api/admin/stats", () => {
     vi.mocked(Question.count).mockReset();
     vi.mocked(Question.findAll).mockReset();
     vi.mocked(PageView.findAll).mockReset();
+    vi.mocked(User.findAll).mockReset();
+    vi.mocked(User.findAll).mockResolvedValue([]);
+    vi.mocked(Session.count).mockReset();
+    vi.mocked(Session.count).mockResolvedValue(0);
+    vi.mocked(Session.findAll).mockReset();
+    vi.mocked(Session.findAll).mockResolvedValue([]);
   });
 
   it("rejects a non-admin", async () => {
@@ -98,5 +110,27 @@ describe("GET /api/admin/stats", () => {
     expect(json.traffic.every((d: any) => d.views === 0 && d.users === 0)).toBe(
       true,
     );
+  });
+
+  it("returns 7-day signup, question and quiz series for the stat cards", async () => {
+    vi.mocked(isAdminRequest).mockResolvedValue(true);
+    vi.mocked(User.count).mockResolvedValue(3);
+    vi.mocked(Question.count).mockResolvedValue(9);
+    vi.mocked(Question.findAll).mockResolvedValue([]);
+    vi.mocked(PageView.findAll).mockResolvedValue([]);
+    vi.mocked(Session.count).mockResolvedValue(12);
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
+    vi.mocked(Session.findAll).mockResolvedValue([
+      { day: today.toISOString(), n: "4" },
+    ] as any);
+
+    const json = await (await GET(makeRequest())).json();
+
+    expect(json.totals.quizzes).toBe(12);
+    expect(json.daily.quizzes).toHaveLength(7);
+    expect(json.daily.quizzes[6]).toBe(4);
+    expect(json.daily.signups).toEqual([0, 0, 0, 0, 0, 0, 0]);
+    expect(json.daily.questions).toHaveLength(7);
   });
 });
