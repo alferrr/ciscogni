@@ -966,11 +966,28 @@ html.dark .admin-shell {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  align-items: flex-start;
+  align-items: flex-end;
   margin-bottom: 1rem;
 
   .admin-search {
     margin-bottom: 0;
+    width: 100%;
+  }
+}
+
+.activity-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  span {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+
+  &.grow {
+    flex: 1 1 240px;
   }
 }
 
@@ -991,15 +1008,6 @@ html.dark .admin-shell {
 
 .activity-row {
   cursor: pointer;
-}
-
-.activity-pill {
-  display: inline-block;
-  font-size: 13px;
-  padding: 3px 10px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  white-space: nowrap;
 }
 
 .activity-description {

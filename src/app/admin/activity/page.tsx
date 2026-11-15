@@ -89,48 +89,58 @@ const AdminActivity = () => {
       <h1 className="admin-page-title">Activity Logs</h1>
 
       <div className="activity-filters">
-        <input
-          className="admin-search"
-          placeholder="Search by user, activity or details..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <select
-          className="activity-select"
-          value={category}
-          onChange={(e) => {
-            setCategory(e.target.value);
-            setPage(1);
-          }}
-        >
-          <option value="">All activity</option>
-          {categories.map((c) => (
-            <option key={c} value={c}>
-              {categoryLabel(c)}
-            </option>
-          ))}
-        </select>
-        <input
-          type="date"
-          className="activity-select"
-          value={from}
-          onChange={(e) => {
-            setFrom(e.target.value);
-            setPage(1);
-          }}
-          aria-label="From date"
-        />
-        <input
-          type="date"
-          className="activity-select"
-          value={to}
-          onChange={(e) => {
-            setTo(e.target.value);
-            setPage(1);
-          }}
-          aria-label="To date"
-        />
-        <button className="admin-btn secondary" onClick={fetchLogs}>
+        <label className="activity-field grow">
+          <span>Search</span>
+          <input
+            className="admin-search"
+            placeholder="Name or keyword"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </label>
+        <label className="activity-field">
+          <span>Activity type</span>
+          <select
+            className="activity-select"
+            value={category}
+            onChange={(e) => {
+              setCategory(e.target.value);
+              setPage(1);
+            }}
+          >
+            <option value="">All types</option>
+            {categories.map((c) => (
+              <option key={c} value={c}>
+                {categoryLabel(c)}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="activity-field">
+          <span>From date</span>
+          <input
+            type="date"
+            className="activity-select"
+            value={from}
+            onChange={(e) => {
+              setFrom(e.target.value);
+              setPage(1);
+            }}
+          />
+        </label>
+        <label className="activity-field">
+          <span>To date</span>
+          <input
+            type="date"
+            className="activity-select"
+            value={to}
+            onChange={(e) => {
+              setTo(e.target.value);
+              setPage(1);
+            }}
+          />
+        </label>
+        <button className="admin-btn secondary activity-refresh" onClick={fetchLogs}>
           <FaArrowsRotate /> Refresh
         </button>
       </div>
@@ -140,10 +150,10 @@ const AdminActivity = () => {
           <table className="admin-table">
             <thead>
               <tr>
-                <th>Timestamp</th>
-                <th>Actor</th>
-                <th>Description</th>
-                <th>Action Type</th>
+                <th>Time</th>
+                <th>User</th>
+                <th>What happened</th>
+                <th>Type</th>
               </tr>
             </thead>
             <tbody>
@@ -169,13 +179,19 @@ const AdminActivity = () => {
                     className="activity-row"
                     onClick={() => setExpanded(expanded === l.id ? null : l.id)}
                   >
-                    <td>
-                      <span className="activity-pill">
-                        {formatTime(l.createdAt)}
-                      </span>
+                    <td style={{ whiteSpace: "nowrap", fontSize: "13px" }}>
+                      {formatTime(l.createdAt)}
                     </td>
                     <td>
-                      <span className="activity-pill">{l.userId ?? "—"}</span>
+                      {l.userName ?? (l.userId ? `User #${l.userId}` : "Anonymous")}
+                      {l.userRole && (
+                        <>
+                          {" "}
+                          <span className={`admin-tag ${l.userRole}`}>
+                            {l.userRole}
+                          </span>
+                        </>
+                      )}
                     </td>
                     <td className="activity-description">
                       {describeAction(l)}
