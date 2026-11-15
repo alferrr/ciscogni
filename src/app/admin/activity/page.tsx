@@ -140,7 +140,10 @@ const AdminActivity = () => {
             }}
           />
         </label>
-        <button className="admin-btn secondary activity-refresh" onClick={fetchLogs}>
+        <button
+          className="admin-btn secondary activity-refresh"
+          onClick={fetchLogs}
+        >
           <FaArrowsRotate /> Refresh
         </button>
       </div>
@@ -152,7 +155,7 @@ const AdminActivity = () => {
               <tr>
                 <th>Time</th>
                 <th>User</th>
-                <th>What happened</th>
+                <th>Description</th>
                 <th>Type</th>
               </tr>
             </thead>
@@ -188,7 +191,8 @@ const AdminActivity = () => {
                       {formatTime(l.createdAt)}
                     </td>
                     <td>
-                      {l.userName ?? (l.userId ? `User #${l.userId}` : "Anonymous")}
+                      {l.userName ??
+                        (l.userId ? `User #${l.userId}` : "Anonymous")}
                       {l.userRole && (
                         <>
                           {" "}
@@ -201,7 +205,10 @@ const AdminActivity = () => {
                     <td className="activity-description">
                       {describeAction(l)}
                       {COMPLETE_ACTIONS.includes(l.action) && (
-                        <span className="activity-view-link"> View results →</span>
+                        <span className="activity-view-link">
+                          {" "}
+                          View results →
+                        </span>
                       )}
                     </td>
                     <td>
