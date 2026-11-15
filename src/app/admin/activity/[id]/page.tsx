@@ -6,7 +6,6 @@ import { FaArrowLeft } from "react-icons/fa6";
 import QuizResultView, {
   type QuizResult,
 } from "@/components/QuizResultView/QuizResultView";
-import { formatTime } from "@/lib/activityText";
 
 export default function QuizResultPage({
   params,
@@ -35,28 +34,13 @@ export default function QuizResultPage({
         <FaArrowLeft /> Back to Activity Logs
       </Link>
 
-      <h1 className="admin-page-title" style={{ marginTop: "1rem" }}>
-        Quiz Results
-      </h1>
-
-      {status === "loading" && <p className="activity-muted">Loading...</p>}
+      {status === "loading" && <p className="activity-muted" style={{ marginTop: "1rem" }}>Loading...</p>}
       {status === "missing" && (
-        <div className="admin-card" style={{ padding: "1.5rem" }}>
+        <div className="admin-card" style={{ padding: "1.5rem", marginTop: "1rem" }}>
           No saved results were found for this quiz.
         </div>
       )}
-      {status === "ready" && result && (
-        <div className="admin-card quiz-result-page">
-          <p className="quiz-result-meta">
-            <strong>
-              {result.studentName ?? "Unknown student"}
-              {result.studentId ? ` (${result.studentId})` : ""}
-            </strong>
-            {" · "}finished {formatTime(result.finishedAt)}
-          </p>
-          <QuizResultView result={result} />
-        </div>
-      )}
+      {status === "ready" && result && <QuizResultView result={result} />}
     </div>
   );
 }
