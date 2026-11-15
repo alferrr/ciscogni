@@ -3,6 +3,7 @@ import { Op, WhereOptions } from "sequelize";
 import { isAdminRequest } from "@/lib/auth";
 import { syncDB } from "@/lib/sync";
 import ActivityLog from "@/models/ActivityLog";
+import User from "@/models/User";
 
 export const dynamic = "force-dynamic";
 
@@ -62,8 +63,28 @@ export async function GET(req: NextRequest) {
     })
   ).map((r) => r.getDataValue("category"));
 
+  // Attach each actor's student ID so the page can show who did what.
+  const ids = [
+    ...new Set(
+      rows.map((r) => r.getDataValue("userId")).filter((v) => v != null),
+    ),
+  ];
+  const users = ids.length
+    ? await User.findAll({
+        where: { id: ids },
+        attributes: ["id", "studentId"],
+      })
+    : [];
+  const studentIds = new Map(
+    users.map((u) => [u.getDataValue("id"), u.getDataValue("studentId")]),
+  );
+  const logs = rows.map((r) => ({
+    ...r.toJSON(),
+    studentId: studentIds.get(r.getDataValue("userId")) ?? null,
+  }));
+
   return NextResponse.json({
-    logs: rows,
+    logs,
     total: count,
     page,
     perPage,

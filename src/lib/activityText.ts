@@ -2,6 +2,7 @@
 
 type LogLike = {
   action: string;
+  studentId?: string | null;
   userName: string | null;
   userId: number | null;
   target: string | null;
@@ -18,13 +19,15 @@ const CATEGORY_LABELS: Record<string, string> = {
 export const categoryLabel = (c: string) =>
   CATEGORY_LABELS[c] ?? c.charAt(0).toUpperCase() + c.slice(1);
 
+// e.g. 11/15/2026, 1:40:40 PM
 export const formatTime = (iso: string) =>
-  new Date(iso).toLocaleString(undefined, {
-    month: "short",
-    day: "numeric",
+  new Date(iso).toLocaleString("en-US", {
+    month: "2-digit",
+    day: "2-digit",
     year: "numeric",
     hour: "numeric",
     minute: "2-digit",
+    second: "2-digit",
   });
 
 const parse = (raw: string | null): Record<string, unknown> => {
@@ -45,13 +48,44 @@ const verdict = (ok: unknown) =>
 const modeName = (m: string | null) =>
   m === "competitive" ? "a competitive" : m ? `a ${m}` : "a";
 
-// A full sentence, e.g. "19020241 logged in".
-export const describeAction = (l: LogLike): string => {
+const whoLabel = (l: LogLike): string => {
+  const sid =
+    l.studentId ?? (l.action.startsWith("auth.") ? l.target : null) ?? null;
+  const name = l.userName ?? (l.userId ? `User #${l.userId}` : null);
+  if (sid && name) return `[${sid} - ${name}]`;
+  if (sid || name) return `[${sid ?? name}]`;
+  return "[Anonymous]";
+};
+
+const ACTION_TYPES: Record<string, string> = {
+  "auth.login": "Session start",
+  "auth.login_failed": "Login failed",
+  "auth.register": "Sign up",
+  "auth.account_activated": "Activation",
+  "user.profile_update": "Profile update",
+  "user.password_change": "Password change",
+  "user.password_change_failed": "Password failed",
+  "user.course_change": "Course change",
+  "user.year_change": "Year change",
+  "quiz.practice_answer": "Practice answer",
+  "quiz.competitive_answer": "Competitive answer",
+  "quiz.practice_complete": "Practice done",
+  "quiz.session_complete": "Session done",
+  "quiz.daily_claim": "Daily reward",
+  "admin.build_logs_view": "View logs",
+};
+
+// Short badge label, e.g. "SESSION START".
+export const actionType = (action: string): string => {
+  if (ACTION_TYPES[action]) return ACTION_TYPES[action].toUpperCase();
+  const [cat, ...rest] = action.split(".");
+  return (rest.join(" ") || cat).replace(/_/g, " ").toUpperCase();
+};
+
+// A full sentence, e.g. "[19020241 - Ann Lee] logged in."
+const sentence = (l: LogLike): string => {
   const d = parse(l.details);
-  const who =
-    l.action.startsWith("auth.") && l.target
-      ? l.target
-      : (l.userName ?? (l.userId ? `User #${l.userId}` : "Someone"));
+  const who = whoLabel(l);
   const id = num(l.target);
 
   switch (l.action) {
@@ -112,6 +146,12 @@ export const describeAction = (l: LogLike): string => {
   }
 };
 
+export const describeAction = (l: LogLike): string => {
+  const base = sentence(l);
+  const extra = describeDetails(l);
+  return extra ? `${base}. ${extra}.` : `${base}.`;
+};
+
 const KEY_LABELS: Record<string, string> = {
   studentId: "Student ID",
   xpEarned: "XP earned",
@@ -148,6 +188,17 @@ export const describeDetails = (l: LogLike): string => {
   ) {
     const xp = d.xpEarned ? ` · +${d.xpEarned} XP` : "";
     return `Score ${d.score}/${d.total}${xp}`;
+  }
+  if (l.action.endsWith("_answer")) {
+    const parts = [
+      d.topic ? `Topic: ${d.topic}` : "",
+      d.selectedAnswer != null ? `Chose ${d.selectedAnswer}` : "",
+      d.isCorrect === false && d.correctAnswer != null
+        ? `Correct answer: ${d.correctAnswer}`
+        : "",
+      d.xpGained ? `+${d.xpGained} XP` : "",
+    ];
+    return parts.filter(Boolean).join(" · ");
   }
   if (l.action === "quiz.daily_claim")
     return `${d.streak}-day streak · +${d.xpEarned} XP`;

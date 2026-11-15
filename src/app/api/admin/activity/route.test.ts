@@ -7,7 +7,10 @@ vi.mock("@/models/ActivityLog", () => ({
   default: { findAndCountAll: vi.fn(), findAll: vi.fn() },
 }));
 
+vi.mock("@/models/User", () => ({ default: { findAll: vi.fn() } }));
+
 import { GET } from "./route";
+import User from "@/models/User";
 import { isAdminRequest } from "@/lib/auth";
 import ActivityLog from "@/models/ActivityLog";
 
@@ -19,8 +22,16 @@ describe("GET /api/admin/activity", () => {
     vi.mocked(isAdminRequest).mockReset();
     vi.mocked(ActivityLog.findAndCountAll).mockReset();
     vi.mocked(ActivityLog.findAll).mockReset();
+    vi.mocked(User.findAll).mockResolvedValue([
+      { getDataValue: (k: string) => (k === "id" ? 5 : "19020241") },
+    ] as any);
     vi.mocked(ActivityLog.findAndCountAll).mockResolvedValue({
-      rows: [{ id: 1 }],
+      rows: [
+        {
+          getDataValue: (k: string) => (k === "userId" ? 5 : undefined),
+          toJSON: () => ({ id: 1, userId: 5 }),
+        },
+      ],
       count: 120,
     } as any);
     vi.mocked(ActivityLog.findAll).mockResolvedValue([
@@ -39,7 +50,7 @@ describe("GET /api/admin/activity", () => {
     const json = await (await get("?page=2&perPage=50")).json();
 
     expect(json).toMatchObject({
-      logs: [{ id: 1 }],
+      logs: [{ id: 1, userId: 5, studentId: "19020241" }],
       total: 120,
       page: 2,
       perPage: 50,

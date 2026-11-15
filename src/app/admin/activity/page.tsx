@@ -4,9 +4,9 @@ import axios from "axios";
 import { FaArrowsRotate } from "react-icons/fa6";
 import AdminTableSkeleton from "@/components/Skeleton/AdminTableSkeleton";
 import {
+  actionType,
   categoryLabel,
   describeAction,
-  describeDetails,
   formatTime,
 } from "@/lib/activityText";
 
@@ -15,6 +15,7 @@ type LogRow = {
   userId: number | null;
   userName: string | null;
   userRole: string | null;
+  studentId: string | null;
   action: string;
   category: string;
   target: string | null;
@@ -139,10 +140,10 @@ const AdminActivity = () => {
           <table className="admin-table">
             <thead>
               <tr>
-                <th>Time</th>
-                <th>User</th>
-                <th>Activity</th>
-                <th>Details</th>
+                <th>Timestamp</th>
+                <th>Actor</th>
+                <th>Description</th>
+                <th>Action Type</th>
               </tr>
             </thead>
             <tbody>
@@ -168,37 +169,24 @@ const AdminActivity = () => {
                     className="activity-row"
                     onClick={() => setExpanded(expanded === l.id ? null : l.id)}
                   >
-                    <td
-                      style={{ whiteSpace: "nowrap", fontSize: "13px" }}
-                      title={new Date(l.createdAt).toLocaleString()}
-                    >
-                      {formatTime(l.createdAt)}
+                    <td>
+                      <span className="activity-pill">
+                        {formatTime(l.createdAt)}
+                      </span>
                     </td>
                     <td>
-                      {l.userName ?? (l.userId ? `User #${l.userId}` : "Anonymous")}
-                      {l.userRole && (
-                        <>
-                          {" "}
-                          <span className={`admin-tag ${l.userRole}`}>
-                            {l.userRole}
-                          </span>
-                        </>
+                      <span className="activity-pill">{l.userId ?? "—"}</span>
+                    </td>
+                    <td className="activity-description">
+                      {describeAction(l)}
+                      {expanded === l.id && l.userAgent && (
+                        <div className="activity-ua">{l.userAgent}</div>
                       )}
                     </td>
                     <td>
                       <span className={`activity-action ${l.category}`}>
-                        {describeAction(l)}
+                        {actionType(l.action)}
                       </span>
-                    </td>
-                    <td
-                      className={
-                        expanded === l.id ? "activity-details open" : "activity-details"
-                      }
-                    >
-                      {describeDetails(l)}
-                      {expanded === l.id && l.userAgent && (
-                        <div className="activity-ua">{l.userAgent}</div>
-                      )}
                     </td>
                   </tr>
                 ))}
