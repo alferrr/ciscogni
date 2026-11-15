@@ -1,8 +1,10 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { FaArrowsRotate } from "react-icons/fa6";
+import QuizResultView, { type QuizResult } from "@/components/QuizResultView/QuizResultView";
 import AdminTableSkeleton from "@/components/Skeleton/AdminTableSkeleton";
+import { COMPLETE_ACTIONS } from "@/lib/quizActions";
 import {
   actionType,
   categoryLabel,
@@ -20,7 +22,6 @@ type LogRow = {
   category: string;
   target: string | null;
   userAgent: string | null;
-  result: { mode: string; score: number; total: number } | null;
   createdAt: string;
 };
 
@@ -37,6 +38,22 @@ const AdminActivity = () => {
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [expanded, setExpanded] = useState<number | null>(null);
+  const [results, setResults] = useState<
+    Record<number, QuizResult | "loading" | "none">
+  >({});
+
+  const toggleRow = async (l: LogRow) => {
+    const opening = expanded !== l.id;
+    setExpanded(opening ? l.id : null);
+    if (!opening || !COMPLETE_ACTIONS.includes(l.action) || results[l.id]) return;
+    setResults((r) => ({ ...r, [l.id]: "loading" }));
+    try {
+      const { data } = await axios.get(`/api/admin/activity/${l.id}`);
+      setResults((r) => ({ ...r, [l.id]: data }));
+    } catch {
+      setResults((r) => ({ ...r, [l.id]: "none" }));
+    }
+  };
 
   const perPage = 50;
 
@@ -174,10 +191,10 @@ const AdminActivity = () => {
               )}
               {!loading &&
                 logs.map((l) => (
+                  <Fragment key={l.id}>
                   <tr
-                    key={l.id}
                     className="activity-row"
-                    onClick={() => setExpanded(expanded === l.id ? null : l.id)}
+                    onClick={() => toggleRow(l)}
                   >
                     <td style={{ whiteSpace: "nowrap", fontSize: "13px" }}>
                       {formatTime(l.createdAt)}
@@ -195,16 +212,6 @@ const AdminActivity = () => {
                     </td>
                     <td className="activity-description">
                       {describeAction(l)}
-                      {expanded === l.id && l.result && (
-                        <div className="activity-result">
-                          <strong>Score:</strong> {l.result.score} /{" "}
-                          {l.result.total} (
-                          {l.result.total
-                            ? Math.round((l.result.score / l.result.total) * 100)
-                            : 0}
-                          %)
-                        </div>
-                      )}
                       {expanded === l.id && l.userAgent && (
                         <div className="activity-ua">{l.userAgent}</div>
                       )}
@@ -215,6 +222,22 @@ const AdminActivity = () => {
                       </span>
                     </td>
                   </tr>
+                  {expanded === l.id && COMPLETE_ACTIONS.includes(l.action) && (
+                    <tr className="activity-result-row">
+                      <td colSpan={4}>
+                        {results[l.id] === "loading" || !results[l.id] ? (
+                          <span className="activity-muted">Loading results...</span>
+                        ) : results[l.id] === "none" ? (
+                          <span className="activity-muted">
+                            No saved results found for this quiz.
+                          </span>
+                        ) : (
+                          <QuizResultView result={results[l.id] as QuizResult} />
+                        )}
+                      </td>
+                    </tr>
+                  )}
+                  </Fragment>
                 ))}
             </tbody>
           </table>
