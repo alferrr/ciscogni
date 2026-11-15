@@ -4,10 +4,13 @@ import { isAdminRequest } from "@/lib/auth";
 import { syncDB } from "@/lib/sync";
 import ActivityLog from "@/models/ActivityLog";
 import User from "@/models/User";
+import Session from "@/models/Session";
 
 export const dynamic = "force-dynamic";
 
 const MAX_PER_PAGE = 100;
+const COMPLETE_ACTIONS = ["quiz.session_complete", "quiz.practice_complete"];
+const MATCH_WINDOW_MS = 60_000;
 
 export async function GET(req: NextRequest) {
   await syncDB();
@@ -77,9 +80,68 @@ export async function GET(req: NextRequest) {
   const studentIds = new Map(
     users.map((u) => [u.getDataValue("id"), u.getDataValue("studentId")]),
   );
+
+  // Quiz completions carry no link to their Session row, so match each one to
+  // the same user's session saved at (nearly) the same moment.
+  const completions = rows.filter((r) =>
+    COMPLETE_ACTIONS.includes(r.getDataValue("action")),
+  );
+  const sessions = completions.length
+    ? await Session.findAll({
+        where: {
+          userId: [...new Set(completions.map((r) => r.getDataValue("userId")))],
+          createdAt: {
+            [Op.between]: [
+              new Date(
+                Math.min(
+                  ...completions.map((r) => +new Date(r.getDataValue("createdAt"))),
+                ) - MATCH_WINDOW_MS,
+              ),
+              new Date(
+                Math.max(
+                  ...completions.map((r) => +new Date(r.getDataValue("createdAt"))),
+                ) + MATCH_WINDOW_MS,
+              ),
+            ],
+          },
+        },
+      })
+    : [];
+
+  const resultFor = (r: (typeof rows)[number]) => {
+    if (!COMPLETE_ACTIONS.includes(r.getDataValue("action"))) return null;
+    const mode =
+      r.getDataValue("action") === "quiz.practice_complete"
+        ? "practice"
+        : r.getDataValue("target");
+    const at = +new Date(r.getDataValue("createdAt"));
+    let best: (typeof sessions)[number] | null = null;
+    let bestGap = MATCH_WINDOW_MS + 1;
+    for (const s of sessions) {
+      if (
+        s.getDataValue("userId") !== r.getDataValue("userId") ||
+        s.getDataValue("mode") !== mode
+      )
+        continue;
+      const gap = Math.abs(+new Date(s.getDataValue("createdAt")) - at);
+      if (gap < bestGap) {
+        best = s;
+        bestGap = gap;
+      }
+    }
+    return best
+      ? {
+          mode: best.getDataValue("mode"),
+          score: best.getDataValue("score"),
+          total: best.getDataValue("total"),
+        }
+      : null;
+  };
+
   const logs = rows.map((r) => ({
     ...r.toJSON(),
     studentId: studentIds.get(r.getDataValue("userId")) ?? null,
+    result: resultFor(r),
   }));
 
   return NextResponse.json({

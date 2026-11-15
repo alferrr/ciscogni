@@ -8,9 +8,11 @@ vi.mock("@/models/ActivityLog", () => ({
 }));
 
 vi.mock("@/models/User", () => ({ default: { findAll: vi.fn() } }));
+vi.mock("@/models/Session", () => ({ default: { findAll: vi.fn() } }));
 
 import { GET } from "./route";
 import User from "@/models/User";
+import Session from "@/models/Session";
 import { isAdminRequest } from "@/lib/auth";
 import ActivityLog from "@/models/ActivityLog";
 
@@ -37,6 +39,37 @@ describe("GET /api/admin/activity", () => {
     vi.mocked(ActivityLog.findAll).mockResolvedValue([
       { getDataValue: () => "auth" },
     ] as any);
+  });
+
+  it("attaches the matching quiz result to a completion row", async () => {
+    vi.mocked(isAdminRequest).mockResolvedValue(true);
+    const at = "2026-11-15T05:00:00.000Z";
+    const data: Record<string, unknown> = {
+      userId: 5,
+      action: "quiz.session_complete",
+      target: "midterms",
+      createdAt: at,
+    };
+    vi.mocked(ActivityLog.findAndCountAll).mockResolvedValue({
+      rows: [
+        {
+          getDataValue: (k: string) => data[k],
+          toJSON: () => ({ id: 1, ...data }),
+        },
+      ],
+      count: 1,
+    } as any);
+    const sess = (mode: string, score: number, createdAt: string) => ({
+      getDataValue: (k: string) =>
+        ({ userId: 5, mode, score, total: 10, createdAt })[k as "mode"],
+    });
+    vi.mocked(Session.findAll).mockResolvedValue([
+      sess("finals", 1, at),
+      sess("midterms", 8, "2026-11-15T05:00:02.000Z"),
+    ] as any);
+
+    const json = await (await get()).json();
+    expect(json.logs[0].result).toEqual({ mode: "midterms", score: 8, total: 10 });
   });
 
   it("rejects non-admins", async () => {

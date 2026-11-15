@@ -15,7 +15,6 @@ import {
   FaMagnifyingGlass,
   FaTerminal,
   FaClockRotateLeft,
-  FaClipboardCheck,
 } from "react-icons/fa6";
 
 const NAV_ITEMS = [
@@ -26,7 +25,6 @@ const NAV_ITEMS = [
   { href: "/admin/seo", label: "SEO", icon: <FaMagnifyingGlass /> },
   { href: "/admin/checklist", label: "Checklist", icon: <FaListCheck /> },
   { href: "/admin/preview", label: "UI Preview", icon: <FaEye /> },
-  { href: "/admin/results", label: "Quiz Results", icon: <FaClipboardCheck /> },
   { href: "/admin/activity", label: "Activity", icon: <FaClockRotateLeft /> },
   { href: "/admin/build-logs", label: "Build Logs", icon: <FaTerminal /> },
 ];

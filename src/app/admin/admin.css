@@ -1058,6 +1058,12 @@ html.dark .admin-shell {
   }
 }
 
+.activity-result {
+  margin-top: 6px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
 .activity-ua {
   margin-top: 6px;
   font-size: 11px;

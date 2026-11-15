@@ -20,6 +20,7 @@ type LogRow = {
   category: string;
   target: string | null;
   userAgent: string | null;
+  result: { mode: string; score: number; total: number } | null;
   createdAt: string;
 };
 
@@ -194,6 +195,16 @@ const AdminActivity = () => {
                     </td>
                     <td className="activity-description">
                       {describeAction(l)}
+                      {expanded === l.id && l.result && (
+                        <div className="activity-result">
+                          <strong>Score:</strong> {l.result.score} /{" "}
+                          {l.result.total} (
+                          {l.result.total
+                            ? Math.round((l.result.score / l.result.total) * 100)
+                            : 0}
+                          %)
+                        </div>
+                      )}
                       {expanded === l.id && l.userAgent && (
                         <div className="activity-ua">{l.userAgent}</div>
                       )}
