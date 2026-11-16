@@ -69,7 +69,8 @@ export default function AdminShell({
     <div className="admin-shell">
       <nav className="admin-rail" aria-label="Admin">
         <Link href="/admin" className="admin-rail-logo" aria-label="Admin home">
-          c
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/favicon.ico" alt="" />
         </Link>
         {NAV_ITEMS.map((item) => {
           const active = item.exact
