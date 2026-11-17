@@ -153,10 +153,10 @@ const AdminActivity = () => {
           <table className="admin-table">
             <thead>
               <tr>
-                <th>Time</th>
-                <th>User</th>
-                <th>Description</th>
-                <th>Type</th>
+                <th scope="col">Time</th>
+                <th scope="col">User</th>
+                <th scope="col">Description</th>
+                <th scope="col">Type</th>
               </tr>
             </thead>
             <tbody>
@@ -171,7 +171,26 @@ const AdminActivity = () => {
                       padding: "2rem",
                     }}
                   >
-                    No activity found.
+                    {query || category || from || to ? (
+                      <>
+                        No activity matches these filters.{" "}
+                        <button
+                          className="admin-link-btn"
+                          onClick={() => {
+                            setSearch("");
+                            setQuery("");
+                            setCategory("");
+                            setFrom("");
+                            setTo("");
+                            setPage(1);
+                          }}
+                        >
+                          Clear filters
+                        </button>
+                      </>
+                    ) : (
+                      "No activity yet."
+                    )}
                   </td>
                 </tr>
               )}
@@ -187,7 +206,7 @@ const AdminActivity = () => {
                       router.push(`/admin/activity/${l.id}`)
                     }
                   >
-                    <td style={{ whiteSpace: "nowrap", fontSize: "13px" }}>
+                    <td className="num nowrap" style={{ fontSize: "13px" }}>
                       {formatTime(l.createdAt)}
                     </td>
                     <td>

@@ -4,6 +4,7 @@ import axios from "axios";
 import { FaTrash, FaPen, FaPlus, FaXmark } from "react-icons/fa6";
 import { useToast } from "@/context/ToastContext";
 import { CLASSES } from "@/config/classes";
+import ConfirmDialog from "@/components/ConfirmDialog/ConfirmDialog";
 import AdminTableSkeleton from "@/components/Skeleton/AdminTableSkeleton";
 
 const TOPICS = [
@@ -47,6 +48,7 @@ const AdminQuestions = () => {
   const [editing, setEditing] = useState<any>(null);
   const [form, setForm] = useState(emptyForm);
   const [search, setSearch] = useState("");
+  const [pendingDelete, setPendingDelete] = useState<number | null>(null);
   const [filterMode, setFilterMode] = useState("all");
   const [filterTopic, setFilterTopic] = useState("all");
   const [page, setPage] = useState(1);
@@ -131,7 +133,7 @@ const AdminQuestions = () => {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Delete this question?")) return;
+    setPendingDelete(null);
     try {
       await axios.delete("/api/admin/questions", { data: { id } });
       showToast("Question deleted.", "success");
@@ -263,12 +265,14 @@ const AdminQuestions = () => {
           <table className="admin-table">
             <thead>
               <tr>
-                <th>Question</th>
-                <th>Type</th>
-                <th>Topic</th>
-                <th>Mode</th>
-                <th>Difficulty</th>
-                <th></th>
+                <th scope="col">Question</th>
+                <th scope="col">Type</th>
+                <th scope="col">Topic</th>
+                <th scope="col">Mode</th>
+                <th scope="col">Difficulty</th>
+                <th scope="col">
+                  <span className="sr-only">Actions</span>
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -283,7 +287,28 @@ const AdminQuestions = () => {
                       padding: "2rem",
                     }}
                   >
-                    No questions found.
+                    {search || filterMode !== "all" || filterTopic !== "all" ? (
+                      <>
+                        No questions match these filters.{" "}
+                        <button
+                          className="admin-link-btn"
+                          onClick={() => {
+                            setSearch("");
+                            setFilterMode("all");
+                            setFilterTopic("all");
+                          }}
+                        >
+                          Clear filters
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        No questions yet.{" "}
+                        <button className="admin-link-btn" onClick={openAdd}>
+                          Add the first question
+                        </button>
+                      </>
+                    )}
                   </td>
                 </tr>
               )}
@@ -292,6 +317,7 @@ const AdminQuestions = () => {
                 <tr key={q.id}>
                   <td style={{ maxWidth: "300px" }}>
                     <p
+                      title={q.questionText}
                       style={{
                         overflow: "hidden",
                         textOverflow: "ellipsis",
@@ -327,13 +353,15 @@ const AdminQuestions = () => {
                     <div style={{ display: "flex", gap: "6px" }}>
                       <button
                         className="admin-btn secondary"
+                        aria-label="Edit question"
                         onClick={() => openEdit(q)}
                       >
                         <FaPen />
                       </button>
                       <button
                         className="admin-btn danger"
-                        onClick={() => handleDelete(q.id)}
+                        aria-label="Delete question"
+                        onClick={() => setPendingDelete(q.id)}
                       >
                         <FaTrash />
                       </button>
@@ -564,6 +592,16 @@ const AdminQuestions = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {pendingDelete !== null && (
+        <ConfirmDialog
+          title="Delete this question?"
+          description="Students will no longer see it in quizzes. This cannot be undone."
+          confirmLabel="Delete question"
+          onConfirm={() => handleDelete(pendingDelete)}
+          onCancel={() => setPendingDelete(null)}
+        />
       )}
     </div>
   );

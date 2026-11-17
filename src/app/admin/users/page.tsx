@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { FaTrash, FaPen, FaXmark } from "react-icons/fa6";
 import { useToast } from "@/context/ToastContext";
+import ConfirmDialog from "@/components/ConfirmDialog/ConfirmDialog";
 import AdminTableSkeleton from "@/components/Skeleton/AdminTableSkeleton";
 import { COURSES } from "@/config/courses";
 
@@ -17,6 +18,10 @@ const AdminUsers = () => {
   const [editing, setEditing] = useState<any>(null);
   const [form, setForm] = useState({ name: "", role: "student", course: "", year: "" });
   const [page, setPage] = useState(1);
+  const [pendingDelete, setPendingDelete] = useState<{
+    id: number;
+    name: string;
+  } | null>(null);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
 
   const perPage = 20;
@@ -64,8 +69,8 @@ const AdminUsers = () => {
     }
   };
 
-  const handleDelete = async (id: number, name: string) => {
-    if (!confirm(`Delete ${name}?`)) return;
+  const handleDelete = async (id: number) => {
+    setPendingDelete(null);
     try {
       await axios.delete("/api/admin/users", { data: { id } });
       showToast("User deleted.", "success");
@@ -99,14 +104,16 @@ const AdminUsers = () => {
           <table className="admin-table">
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Course</th>
-                <th>Year</th>
-                <th>XP</th>
-                <th>Streak</th>
-                <th>Role</th>
-                <th></th>
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Course</th>
+                <th scope="col" className="num">Year</th>
+                <th scope="col" className="num">XP</th>
+                <th scope="col" className="num">Streak</th>
+                <th scope="col">Role</th>
+                <th scope="col">
+                  <span className="sr-only">Actions</span>
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -121,7 +128,19 @@ const AdminUsers = () => {
                       padding: "2rem",
                     }}
                   >
-                    No users found.
+                    {search ? (
+                      <>
+                        No users match &ldquo;{search}&rdquo;.{" "}
+                        <button
+                          className="admin-link-btn"
+                          onClick={() => setSearch("")}
+                        >
+                          Clear search
+                        </button>
+                      </>
+                    ) : (
+                      "No users yet."
+                    )}
                   </td>
                 </tr>
               )}
@@ -134,9 +153,9 @@ const AdminUsers = () => {
                       {u.email}
                     </td>
                     <td>{u.course}</td>
-                    <td>{u.year}</td>
-                    <td>{u.xp}</td>
-                    <td>{u.streak}</td>
+                    <td className="num">{u.year}</td>
+                    <td className="num">{u.xp}</td>
+                    <td className="num">{u.streak}</td>
                     <td>
                       <span className={`admin-tag ${u.role}`}>{u.role}</span>
                     </td>
@@ -144,6 +163,7 @@ const AdminUsers = () => {
                       <div style={{ display: "flex", gap: "6px" }}>
                         <button
                           className="admin-btn secondary"
+                          aria-label={`Edit ${u.name}`}
                           onClick={() => openEdit(u)}
                         >
                           <FaPen />
@@ -151,7 +171,10 @@ const AdminUsers = () => {
                         {u.role !== "admin" && (
                           <button
                             className="admin-btn danger"
-                            onClick={() => handleDelete(u.id, u.name)}
+                            aria-label={`Delete ${u.name}`}
+                            onClick={() =>
+                              setPendingDelete({ id: u.id, name: u.name })
+                            }
                           >
                             <FaTrash />
                           </button>
@@ -299,6 +322,16 @@ const AdminUsers = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {pendingDelete && (
+        <ConfirmDialog
+          title={`Delete ${pendingDelete.name}?`}
+          description="This permanently removes the account and cannot be undone."
+          confirmLabel="Delete user"
+          onConfirm={() => handleDelete(pendingDelete.id)}
+          onCancel={() => setPendingDelete(null)}
+        />
       )}
     </div>
   );

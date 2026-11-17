@@ -123,6 +123,7 @@ const AdminChecklist = () => {
                 </label>
                 <button
                   className="admin-btn danger"
+                  aria-label="Delete note"
                   onClick={() => handleDelete(t.id)}
                 >
                   <FaTrash />
@@ -148,6 +149,7 @@ const AdminChecklist = () => {
                     </label>
                     <button
                       className="admin-btn danger"
+                      aria-label="Delete note"
                       onClick={() => handleDelete(t.id)}
                     >
                       <FaTrash />
