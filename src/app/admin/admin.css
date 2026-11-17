@@ -31,6 +31,10 @@
 .admin-card:has(> .admin-table-wrapper) {
   padding: 0;
   overflow: hidden;
+  /* Fill the page width: cancel the content padding on both sides. */
+  margin-inline: calc(var(--content-pad, 0px) * -1);
+  border-radius: 0;
+  border-inline: none;
 }
 
 .admin-table {

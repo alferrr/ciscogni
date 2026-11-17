@@ -180,10 +180,11 @@
 }
 
 .admin-content {
+  --content-pad: 2rem;
   flex: 1;
   background: var(--secondary);
   border-top-left-radius: 28px;
-  padding: 2rem;
+  padding: var(--content-pad);
   min-width: 0;
 }
 
@@ -231,7 +232,8 @@
   }
 
   .admin-content {
+    --content-pad: 1rem;
     border-top-left-radius: 0;
-    padding: 1.25rem 1rem;
+    padding: 1.25rem var(--content-pad);
   }
 }
