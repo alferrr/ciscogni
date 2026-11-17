@@ -27,6 +27,12 @@
   overflow-x: auto;
 }
 
+/* A card that only holds a table: no card padding, the rows carry it. */
+.admin-card:has(> .admin-table-wrapper) {
+  padding: 0;
+  overflow: hidden;
+}
+
 .admin-table {
   width: 100%;
   border-collapse: collapse;
@@ -54,7 +60,7 @@
   }
 
   td {
-    padding: 12px;
+    padding: 14px 12px;
     border-bottom: 1px solid var(--border);
     color: var(--text);
     vertical-align: middle;
@@ -62,6 +68,16 @@
 
   tr:last-child td {
     border-bottom: none;
+  }
+
+  th:first-child,
+  td:first-child {
+    padding-left: 1.5rem;
+  }
+
+  th:last-child,
+  td:last-child {
+    padding-right: 1.5rem;
   }
 
   /* Alternating row colors */
