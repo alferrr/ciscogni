@@ -64,7 +64,12 @@
     border-bottom: none;
   }
 
-  tr:hover td {
+  /* Alternating row colors */
+  tbody tr:nth-child(even) td {
+    background: var(--secondary);
+  }
+
+  tbody tr:hover td {
     background: var(--input);
   }
 }
